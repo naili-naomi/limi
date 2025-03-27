@@ -1,8 +1,11 @@
 # limi
-Ideia inicial:
+### Ideia inicial
+Site de catálogo de livros - com reviews
 
-- Catálogo de livros - com reviews
-- Kotlin
+### Descrição
+O usuário pode adicionar livros, caso não exista no banco de dados.
+Caso exista, ele pode adicionar uma review.
+
+**Linguagem:** Kotlin
   
-ainda não sabemos o que vamos fazer aqui
-socorro Deus
+ainda não sabemos o que vamos fazer aqui socorro Deus
