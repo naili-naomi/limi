@@ -2,13 +2,11 @@
 
 **Limi** é um projeto de desenvolvimento de sistemas que consiste em uma plataforma simples de catálogo de livros com sistema de reviews. Inspirado por plataformas como **Skoob** e **Goodreads**, o objetivo é oferecer uma experiência limpa e objetiva para usuários que desejam explorar livros e compartilhar suas opiniões.
 
----
 
-## Ideia Inicial
+## Ideia 
 
 Criar um site de catálogo de livros com reviews, oferecendo funcionalidades básicas de descoberta, avaliação e cadastro de livros. Buscamos uma abordagem mais leve e direta em comparação com plataformas populares.
 
----
 
 ## Descrição
 
