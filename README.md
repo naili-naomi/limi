@@ -1,12 +1,39 @@
-# limi
-### Ideia inicial
-Site de catálogo de livros - com reviews
+# 📚 limi
 
-### Descrição
-Um usuário logado tem acesso a ações que um usuário convidado não tem, como por exemplo, adicionar e editar reviews, ou adicionar livros que não existem no banco de dados. Um usuário convidado (que não tem cadastro) tem acesso ao catálogo de livros existentes no sistema e pode pesquisar livros, ver seus detalhes e ver as reviews deixadas pelos usuários. As reviews contém notas de 1 ao 5 para o livro, além do comentário do usuário.
+**Limi** é um projeto de desenvolvimento de sistemas que consiste em uma plataforma simples de catálogo de livros com sistema de reviews. Inspirado por plataformas como **Skoob** e **Goodreads**, o objetivo é oferecer uma experiência limpa e objetiva para usuários que desejam explorar livros e compartilhar suas opiniões.
 
-**Linguagem:** Kotlin
+---
 
-**Front-end**: ?
+## Ideia Inicial
+
+Criar um site de catálogo de livros com reviews, oferecendo funcionalidades básicas de descoberta, avaliação e cadastro de livros. Buscamos uma abordagem mais leve e direta em comparação com plataformas populares.
+
+---
+
+## Descrição
+
+O sistema é dividido em duas experiências principais:
+
+### Usuário Logado
+- Pode adicionar e editar **reviews** de livros;
+- Pode **adicionar livros** que ainda não estão no catálogo;
+- Pode editar informações dos livros que adicionou;
+- Pode ver todas as reviews e interagir com o conteúdo.
+
+### Usuário Convidado (não logado)
+- Pode **navegar** pelo catálogo de livros;
+- Pode **pesquisar** títulos, autores ou gêneros;
+- Pode ver **detalhes** dos livros;
+- Pode **ler as reviews** deixadas por usuários logados.
+
+### Reviews
+- Cada review possui uma **nota de 1 a 5** estrelas;
+- Acompanhada de um **comentário textual**;
+- Relacionada a um usuário e a um livro específico.
+
+## Estrutura
+
+- **Linguagem de Programação/Back-end:** Kotlin + Ktor
+- **Front-end:** HTML, CSS, JavaScript (React)
   
-ainda não sabemos o que vamos fazer aqui socorro Deus
+(não sabemos o que vamos fazer aqui socorro Deus)
