@@ -1,39 +1,19 @@
 package com.limi.models
 
-object Catalogo {
-    private val Books = mutableListOf<Book>()
+class Catalogo {
+    private val livros: MutableList<Livro> = mutableListOf()
 
-    fun adicionarBook(Book: Book) {
-        Books.add(Book)
+    fun adicionarLivro(livro: Livro) {
+        livros.add(livro)
     }
 
-    fun listarBooks(): List<Book> {
-        return Books
+    fun pesquisarTitulo(titulo: String): List<Livro> {
+        return livros.filter { it.titulo.contains(titulo, ignoreCase = true) }
     }
 
-    fun pesquisarBook(titulo: String): List<Book> {
-        return Books.filter { it.titulo.contains(titulo, ignoreCase = true) }
+    fun pesquisarAutor(nomeAutor: String): List<Livro> {
+        return livros.filter { it.autor.contains(nomeAutor, ignoreCase = true) }
     }
 
-    fun pesquisarAutor(nomeAutor: String): List<Book> {
-        return Books.filter { it.autor.contains(nomeAutor, ignoreCase = true) }
-    }
-
-    fun getBookPorId(id: Int): Book? {
-        return Books.find { it.id == id }
-    }
-
-    fun atualizarBook(id: Int, novoBook: Book): Boolean {
-        val index = Books.indexOfFirst { it.id == id }
-        return if (index != -1) {
-            Books[index] = novoBook
-            true
-        } else {
-            false
-        }
-    }
-
-    fun removerBook(id: Int): Boolean {
-        return Books.removeIf { it.id == id }
-    }
+    fun getLivros(): List<Livro> = livros
 }

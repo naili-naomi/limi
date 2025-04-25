@@ -1,6 +1,9 @@
 package com.limi.models
 
-data class Book(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Livro(
     val id: Int,
     val titulo: String,
     val autor: String,

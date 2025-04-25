@@ -1,6 +1,6 @@
 package com.limi.models
 
-data class Author (
+data class Autor (
     val id: Int,
     val nome: String,
 )
