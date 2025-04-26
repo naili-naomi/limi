@@ -4,7 +4,7 @@ import com.limi.models.User
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import services.UserService
+import com.limi.services.UserService
 
 class UserServiceTest {
 

@@ -5,7 +5,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.limi.models.Livro
-import services.CatalogoService
+import com.limi.services.CatalogoService
 
 fun Route.catalogoRoutes(catalogoService: CatalogoService) {
 

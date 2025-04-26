@@ -5,7 +5,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.limi.models.User
-import services.UserService
+import com.limi.services.UserService
 
 fun Route.userRoutes(userService: UserService) {
 

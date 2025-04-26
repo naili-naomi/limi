@@ -8,11 +8,11 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.http.*
-
-import com.limi.controllers.*
-import com.limi.services.*
-import controllers.livroRoutes
-import services.*
+import com.limi.config.DatabaseFactory
+import com.limi.repositories.LivroRepository
+import com.limi.repositories.ReviewRepository
+import com.limi.controllers.* // Import corrigido
+import com.limi.services.* // Import corrigido
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
@@ -21,13 +21,14 @@ fun main() {
 }
 
 fun Application.module() {
+    // Inicialização do banco
+    DatabaseFactory.init()
+
     // Plugins
-    install(ContentNegotiation) {
-        json()
-    }
+    install(ContentNegotiation) { json() }
 
     install(CORS) {
-        anyHost() // ajuste para produção depois
+        anyHost()
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Put)
@@ -35,19 +36,25 @@ fun Application.module() {
         allowHeader(HttpHeaders.ContentType)
     }
 
-    // Instância dos serviços (simples, ainda sem banco)
-    val catalogoService = CatalogoService()
-    val livroService = LivroService()
-    val userService = UserService()
-    val reviewService = ReviewService()
-    val autorService = AutorService()
+    // Repositórios
+    val livroRepository = LivroRepository()
+    val reviewRepository = ReviewRepository()
 
-    // Registro das rotas dos controllers
+    // Serviços com injeção de dependência correta
+    val catalogoService = CatalogoService(livroRepository)
+    val livroService = LivroService(livroRepository)
+    val reviewService = ReviewService(reviewRepository)
+
+    // Services que parecem estar incompletos (ajustar depois):
+    val userService = UserService() // Precisa de UserRepository?
+    val autorService = AutorService() // Precisa de AutorRepository?
+
+    // Rotas
     routing {
         catalogoRoutes(catalogoService)
         livroRoutes(livroService)
-        userRoutes(userService)
         reviewRoutes(reviewService)
-        autorRoutes(autorService)
+        //userRoutes(userService)
+       // autorRoutes(autorService)
     }
 }

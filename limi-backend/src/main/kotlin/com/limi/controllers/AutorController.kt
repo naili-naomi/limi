@@ -5,7 +5,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.limi.models.Autor
-import services.AutorService
+import com.limi.services.AutorService
 
 fun Route.autorRoutes(autorService: AutorService) {
 

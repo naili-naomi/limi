@@ -1,38 +1,54 @@
-package controllers
+package com.limi.controllers  // Pacote corrigido para manter a estrutura
 
+import com.limi.models.Livro
+import com.limi.services.LivroService
 import io.ktor.server.application.*
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import com.limi.models.Livro
-import services.LivroService
 
 fun Route.livroRoutes(livroService: LivroService) {
 
     route("/livros") {
 
         get {
-            call.respond(livroService.listarLivros())
+            try {
+                val livros = livroService.listarLivros()
+                call.respond(livros)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Erro ao buscar livros")
+            }
         }
 
         get("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             if (id == null) {
-                call.respondText("ID inválido")
+                call.respond(HttpStatusCode.BadRequest, "ID inválido")
                 return@get
             }
-            val livro = livroService.buscarLivroPorId(id)
-            if (livro != null) {
-                call.respond(livro)
-            } else {
-                call.respondText("Livro não encontrado")
+
+            try {
+                val livro = livroService.buscarLivroPorId(id)
+                livro?.let {
+                    call.respond(it)
+                } ?: call.respond(HttpStatusCode.NotFound, "Livro não encontrado")
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Erro na busca")
             }
         }
 
         post {
-            val novoLivro = call.receive<Livro>()
-            livroService.adicionarLivro(novoLivro)
-            call.respondText("Livro adicionado!")
+            try {
+                val novoLivro = call.receive<Livro>()
+                val livroSalvo = livroService.adicionarLivro(novoLivro)
+                call.respond(HttpStatusCode.Created, livroSalvo)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Erro ao adicionar livro: ${e.localizedMessage}"
+                )
+            }
         }
     }
 }

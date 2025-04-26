@@ -29,6 +29,11 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
 }
 
 tasks.test {
@@ -36,9 +41,9 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
 
 application {
-    mainClass.set("com.limi.ApplicationKt")
+    mainClass.set("com.limi.MainKt")
 }
