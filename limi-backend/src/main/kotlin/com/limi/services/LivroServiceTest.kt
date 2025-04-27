@@ -17,7 +17,14 @@ class LivroServiceTest {
 
     @Test
     fun `deve adicionar um livro corretamente`() {
-        val livro = Livro(1, "1984", "George Orwell", 1949, "Distopia", "Ficção")
+        val livro = Livro(
+            id = 1,
+            titulo = "1984",
+            autor = "George Orwell",
+            anoPublicacao = 1949,
+            sinopse = "Distopia",
+            generos = listOf("Ficção") // Corrigido para generos
+        )
         livroService.adicionarLivro(livro)
 
         val resultado = livroService.listarLivros()

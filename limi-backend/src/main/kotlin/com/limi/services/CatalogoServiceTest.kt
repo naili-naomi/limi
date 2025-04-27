@@ -23,7 +23,7 @@ class CatalogoServiceTest {
             autor = "Tolkien",
             anoPublicacao = 1954,
             sinopse = "Trilogia épica",
-            genero = "Fantasia"  // Campo obrigatório adicionado
+            generos = listOf("Fantasia")  // Campo obrigatório adicionado
         )
         livroRepository.addLivro(livro)
 

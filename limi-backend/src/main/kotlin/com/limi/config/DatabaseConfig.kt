@@ -1,5 +1,8 @@
 package com.limi.config
 
+import com.limi.models.Autores
+import com.limi.models.Generos
+import com.limi.models.LivroGenero
 import com.limi.models.Livros
 import com.limi.models.Reviews
 import org.jetbrains.exposed.sql.Database
@@ -10,19 +13,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     fun init() {
-        val url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db" //
+        val url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db"
         val driver = "org.sqlite.JDBC"
 
-        Database.connect(
-            url = url,
-            driver = driver
-        )
+        Database.connect(url, driver)
 
         transaction {
             addLogger(StdOutSqlLogger)
-            // Cria todas as tabelas
-            SchemaUtils.create(Livros, Reviews)
-            commit() // Garante o commit
+            SchemaUtils.create(Autores, Generos, Livros, LivroGenero, Reviews)
+            commit()
+        }
+
+        transaction {
+            DatabaseSeed.seedLivrosIniciais()
         }
     }
 }

@@ -34,6 +34,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
     implementation("org.xerial:sqlite-jdbc:3.42.0.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("com.h2database:h2:2.1.214")
+    testImplementation("org.jetbrains.exposed:exposed-test:0.41.1")
 }
 
 tasks.test {

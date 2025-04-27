@@ -8,28 +8,28 @@ import kotlinx.serialization.Serializable
 
 object Livros : IntIdTable("livros") {
     val titulo = varchar("titulo", 255)
-    val autor = varchar("autor", 255)
+    val autor = reference("autor_id", Autores)
     val anoPublicacao = integer("ano_publicacao")
     val sinopse = text("sinopse")
-    val genero = varchar("genero", 100).nullable()
+  //  val genero = varchar("genero", 100).nullable()
 }
 
 class LivroEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<LivroEntity>(Livros)
 
     var titulo by Livros.titulo
-    var autor by Livros.autor
+    var autor by AutorEntity referencedOn Livros.autor
     var anoPublicacao by Livros.anoPublicacao
     var sinopse by Livros.sinopse
-    var genero by Livros.genero
+    val generos by GeneroEntity via LivroGenero
 
     fun toLivro() = Livro(
-        id.value,
-        titulo,
-        autor,
-        anoPublicacao,
-        sinopse,
-        genero
+        id = id.value,
+        titulo = titulo,
+        autor = autor.nome,
+        anoPublicacao = anoPublicacao,
+        sinopse = sinopse,
+        generos = generos.map { it.nome }
     )
 }
 
@@ -40,5 +40,5 @@ data class Livro(
     val autor: String,
     val anoPublicacao: Int,
     val sinopse: String,
-    val genero: String? = null
+    val generos: List<String>
 )
