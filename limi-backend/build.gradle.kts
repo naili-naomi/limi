@@ -37,7 +37,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("com.h2database:h2:2.1.214")
-    testImplementation("org.jetbrains.exposed:exposed-test:0.41.1")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
 }
 
 tasks.test {
@@ -49,5 +50,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("com.limi.MainKt")
+    mainClass.set("com.limi.ApplicationKt")
 }

@@ -21,7 +21,8 @@ object DatabaseFactory {
 
         transaction {
             addLogger(StdOutSqlLogger)
-            SchemaUtils.create(Autores, Generos, Livros, LivroGenero, Reviews, Users)
+            SchemaUtils.create(Autores, Users, Generos, Livros,
+                LivroGenero, Reviews)
             commit()
         }
 

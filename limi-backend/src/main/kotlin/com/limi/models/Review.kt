@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 object Reviews : IntIdTable("reviews") {
     val livroId = integer("livro_id").references(Livros.id, onDelete = ReferenceOption.CASCADE)
-    val userId = varchar("user_id", 255)
+    val userId = integer("user_id").references(Users.id, onDelete = ReferenceOption.CASCADE)
     val comentario = text("comentario")
     val nota = integer("nota").check { it.between(1, 5) }
 }
@@ -35,7 +35,7 @@ class ReviewEntity(id: EntityID<Int>) : IntEntity(id) {
 data class Review(
     val id: Int,
     val livroId: Int,
-    val userId: String,
+    val userId: Int,
     val comentario: String,
     val nota: Int
 )

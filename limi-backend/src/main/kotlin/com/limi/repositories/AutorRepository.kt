@@ -6,14 +6,12 @@ import com.limi.models.Autores
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class AutorRepository {
-    fun addAutor(autor: Autor): Autor {
-        transaction {
+    fun addAutor(autor: Autor): Autor = transaction {
             AutorEntity.new {
                 nome = autor.nome
-            }
+            }.toAutor()
         }
-        return autor
-    }
+
 
     fun getAllAutores(): List<Autor> {
         return transaction {
@@ -25,6 +23,11 @@ class AutorRepository {
             }
         }
     }
+    fun getAutorById(id: Int): Autor? = transaction {
+        AutorEntity.findById(id)?.toAutor()
+        }
+
+
 
     fun buscarPorNome(nome: String): Autor? {
         return transaction {

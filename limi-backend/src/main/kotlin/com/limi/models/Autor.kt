@@ -25,4 +25,6 @@ class AutorEntity(id: EntityID<Int>) : IntEntity(id) {
     var nome by Autores.nome
     val livros by LivroEntity referrersOn Livros.autor
 
+    fun toAutor() = Autor(id.value, nome)
+
 }

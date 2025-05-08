@@ -6,21 +6,23 @@ import com.limi.models.Users
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepository {
-    fun addUser(user: User): User {
+    fun addUser(user: User): User =
         transaction {
             UserEntity.new {
                 nome = user.nome
+                username = user.username
                 email = user.email
-            }
+                senha = user.senha
+            }.toUser()
         }
-        return user
-    }
+
+
 
     fun buscarPorEmail(email: String): User? {
         return transaction {
             UserEntity.find { Users.email eq email }
                 .firstOrNull()
-                ?.let { User(it.id.value, it.nome, it.email, it.username, it.senha) }
+                ?.let { User(it.id.value, it.nome,  it.username, it.email, it.senha) }
         }
     }
 
