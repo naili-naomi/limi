@@ -9,12 +9,8 @@ import com.limi.models.Review
 import com.limi.services.ReviewService
 
 fun Route.reviewRoutes(reviewService: ReviewService) {
-
+   // Redundância aqui... ajeitar depois
     route("/reviews") {
-
-        get {
-            call.respond(reviewService.listarReviews())
-        }
 
         get("/livro/{livroId}") {
             val livroId = call.parameters["livroId"]?.toIntOrNull()

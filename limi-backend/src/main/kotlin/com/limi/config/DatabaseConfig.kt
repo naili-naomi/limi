@@ -2,6 +2,7 @@ package com.limi.config
 
 import com.limi.models.Autores
 import com.limi.models.Generos
+import com.limi.models.Users
 import com.limi.models.LivroGenero
 import com.limi.models.Livros
 import com.limi.models.Reviews
@@ -20,7 +21,7 @@ object DatabaseFactory {
 
         transaction {
             addLogger(StdOutSqlLogger)
-            SchemaUtils.create(Autores, Generos, Livros, LivroGenero, Reviews)
+            SchemaUtils.create(Autores, Generos, Livros, LivroGenero, Reviews, Users)
             commit()
         }
 

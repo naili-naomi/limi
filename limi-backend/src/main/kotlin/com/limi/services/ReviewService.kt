@@ -12,8 +12,8 @@ class ReviewService(private val reviewRepository: ReviewRepository) {
         return reviewRepository.getReviewsByLivroId(livroId)
     }
 
-    fun listarReviews(): List<Review> {
-        return reviewRepository.getReviewsByLivroId(1) // Ajuste conforme necessidade
+    fun listarReviews(livroId: Int): List<Review> {
+        return reviewRepository.getReviewsByLivroId(livroId) // Ajuste conforme necessidade
     }
 
     fun atualizarReview(id: Int, novoComentario: String, novaNota: Int): Review? {

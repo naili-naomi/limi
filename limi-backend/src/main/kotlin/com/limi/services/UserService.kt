@@ -1,17 +1,12 @@
 package com.limi.services
 
 import com.limi.models.User
+import com.limi.repositories.UserRepository
 
-class UserService {
-    private val usuarios = mutableListOf<User>()
+class UserService(private val userRepository: UserRepository) {
+    fun adicionarUser(usuario: User) = userRepository.addUser(usuario)
 
-    fun adicionarUser(usuario: User) {
-        usuarios.add(usuario)
-    }
+    fun buscarPorEmail(email: String): User? = userRepository.buscarPorEmail(email)
 
-    fun buscarPorEmail(email: String): User? {
-        return usuarios.find { it.email.equals(email, ignoreCase = true) }
-    }
-
-    fun listarUsers(): List<User> = usuarios
+    fun listarUsers(): List<User> = userRepository.getAllUsers()
 }

@@ -11,6 +11,8 @@ import io.ktor.http.*
 import com.limi.config.DatabaseFactory
 import com.limi.repositories.LivroRepository
 import com.limi.repositories.ReviewRepository
+import com.limi.repositories.AutorRepository
+import com.limi.repositories.UserRepository
 import com.limi.controllers.* // Import corrigido
 import com.limi.services.* // Import corrigido
 
@@ -39,22 +41,22 @@ fun Application.module() {
     // Repositórios
     val livroRepository = LivroRepository()
     val reviewRepository = ReviewRepository()
+    val userRepository = UserRepository()
+    val autorRepository = AutorRepository()
 
     // Serviços com injeção de dependência correta
     val catalogoService = CatalogoService(livroRepository)
     val livroService = LivroService(livroRepository)
     val reviewService = ReviewService(reviewRepository)
-
-    // Services que parecem estar incompletos (ajustar depois):
-    val userService = UserService() // Precisa de UserRepository?
-    val autorService = AutorService() // Precisa de AutorRepository?
+    val userService = UserService(userRepository)
+    val autorService = AutorService(autorRepository)
 
     // Rotas
     routing {
         catalogoRoutes(catalogoService)
         livroRoutes(livroService)
         reviewRoutes(reviewService)
-        //userRoutes(userService)
-       // autorRoutes(autorService)
+        userRoutes(userService)
+        autorRoutes(autorService)
     }
 }

@@ -10,9 +10,6 @@ import io.ktor.server.routing.*
 
 fun Route.reviewRoutes(reviewService: ReviewService) {
     route("/reviews") {
-        get {
-            call.respond(reviewService.listarReviews())
-        }
 
         get("/{livroId}") {
             val livroId = call.parameters["livroId"]?.toIntOrNull()
