@@ -23,7 +23,8 @@ fun Route.reviewRoutes(reviewService: ReviewService) {
         post {
             val novaReview = call.receive<Review>()
             reviewService.adicionarReview(novaReview)
-            call.respondText("Review adicionada!", status = HttpStatusCode.Created)
+            call.respond(HttpStatusCode.Created, novaReview)
+           // call.respondText("Review adicionada!", status = HttpStatusCode.Created)
         }
     }
 }

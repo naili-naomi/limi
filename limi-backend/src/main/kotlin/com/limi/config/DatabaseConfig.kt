@@ -13,12 +13,11 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
-    fun init() {
-        val url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db"
-        val driver = "org.sqlite.JDBC"
-
-        Database.connect(url, driver)
-
+    fun init(url: String? = null, driver: String? = null) {
+        // Só conecta se vierem parâmetros explícitos
+        if (url != null && driver != null) {
+            Database.connect(url, driver)
+        }
         transaction {
             addLogger(StdOutSqlLogger)
             SchemaUtils.create(Autores, Users, Generos, Livros,

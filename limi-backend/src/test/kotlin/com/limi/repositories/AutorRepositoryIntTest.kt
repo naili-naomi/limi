@@ -27,7 +27,7 @@ class AutorRepositoryIntTest {
     @Test
     fun `adiciona autor e recupera por id`() {
         val autor = Autor(
-            id = 0,
+            id = 20,
             nome = "Isaac Asimov",
         )
 
@@ -41,7 +41,7 @@ class AutorRepositoryIntTest {
 
     @Test
     fun `listar todos retorna lista não vazia após adição`() {
-        val autor = Autor(0, "Arthur C. Clarke")
+        val autor = Autor(21, "Arthur C. Clarke")
         repo.addAutor(autor)
 
         val lista = repo.getAllAutores()

@@ -27,7 +27,7 @@ class UserRepositoryIntTest {
     @Test
     fun `deve adicionar e recuperar usuário por email`() {
         val user = User(
-            id = 0,
+            id = 5,
             nome = "Maria",
             username = "mariazinha",
             email = "maria@teste.com",

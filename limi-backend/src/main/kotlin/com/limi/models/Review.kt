@@ -33,7 +33,7 @@ class ReviewEntity(id: EntityID<Int>) : IntEntity(id) {
 
 @Serializable
 data class Review(
-    val id: Int,
+    val id: Int? = null,
     val livroId: Int,
     val userId: Int,
     val comentario: String,

@@ -14,7 +14,7 @@ class ReviewServiceTest {
 
     @Test
     fun `adicionarReview deve retornar review com mesmo id`() {
-        val input = Review(id = 0, livroId = 1, userId = 0, comentario = "OK", nota = 4)
+        val input = Review(id = 0, livroId = 1, userId = 1, comentario = "OK", nota = 4)
         val saved = input.copy(id = 42)
         every { reviewRepository.addReview(input) } returns saved
 
@@ -28,8 +28,8 @@ class ReviewServiceTest {
     @Test
     fun `buscarReviewsPorLivro deve delegar ao repository`() {
         val lista = listOf(
-            Review(id = 1, livroId = 5, userId = 1, comentario = "A", nota = 3),
-            Review(id = 2, livroId = 5, userId = 2, comentario = "B", nota = 5)
+            Review(id = 1, livroId = 5, userId = 2, comentario = "A", nota = 3),
+            Review(id = 2, livroId = 5, userId = 3, comentario = "B", nota = 5)
         )
         every { reviewRepository.getReviewsByLivroId(5) } returns lista
 

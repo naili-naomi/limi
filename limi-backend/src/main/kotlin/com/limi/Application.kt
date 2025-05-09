@@ -15,6 +15,12 @@ import com.limi.repositories.AutorRepository
 import com.limi.repositories.UserRepository
 import com.limi.controllers.* // Import corrigido
 import com.limi.services.* // Import corrigido
+import com.limi.config.configureErrorHandling
+import com.limi.services.ExternalBookService
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
@@ -24,7 +30,10 @@ fun main() {
 
 fun Application.module() {
     // Inicialização do banco
-    DatabaseFactory.init()
+    DatabaseFactory.init(
+      "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db",
+        "org.sqlite.JDBC"
+    )
 
     // Plugins
     install(ContentNegotiation) { json() }
@@ -37,16 +46,18 @@ fun Application.module() {
         allowMethod(HttpMethod.Delete)
         allowHeader(HttpHeaders.ContentType)
     }
+    val client = HttpClient(CIO)
 
     // Repositórios
     val livroRepository = LivroRepository()
     val reviewRepository = ReviewRepository()
     val userRepository = UserRepository()
     val autorRepository = AutorRepository()
+    val externalBookService = ExternalBookService(client)
 
     // Serviços com injeção de dependência correta
     val catalogoService = CatalogoService(livroRepository)
-    val livroService = LivroService(livroRepository)
+    val livroService = LivroService(livroRepository, externalBookService)
     val reviewService = ReviewService(reviewRepository)
     val userService = UserService(userRepository)
     val autorService = AutorService(autorRepository)
@@ -59,4 +70,6 @@ fun Application.module() {
         userRoutes(userService)
         autorRoutes(autorService)
     }
+
+    configureErrorHandling()
 }

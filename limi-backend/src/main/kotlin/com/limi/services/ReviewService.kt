@@ -2,9 +2,13 @@ package com.limi.services
 
 import com.limi.models.Review
 import com.limi.repositories.ReviewRepository
+import com.limi.validation.validateForCreation
+
 
 class ReviewService(private val reviewRepository: ReviewRepository) {
     fun adicionarReview(review: Review): Review {
+
+        review.validateForCreation()
         return reviewRepository.addReview(review)
     }
 

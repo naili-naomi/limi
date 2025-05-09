@@ -6,6 +6,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.limi.models.User
 import com.limi.services.UserService
+import io.ktor.http.HttpStatusCode // Adicione esta linha
+import com.limi.validation.validateForCreation
 
 fun Route.userRoutes(userService: UserService) {
 
@@ -25,10 +27,11 @@ fun Route.userRoutes(userService: UserService) {
             }
         }
 
-        post {
+        post ("/cadastro"){
             val novoUsuario = call.receive<User>()
-            userService.adicionarUser(novoUsuario)
-            call.respondText("Usuário cadastrado!")
+            novoUsuario.validateForCreation()
+            val criado = userService.adicionarUser(novoUsuario)
+            call.respond(HttpStatusCode.Created, criado)
         }
     }
 }
