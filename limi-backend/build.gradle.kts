@@ -39,6 +39,14 @@ dependencies {
     testImplementation("com.h2database:h2:2.1.214")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
+    implementation("org.valiktor:valiktor-core:0.12.0")
+    implementation("org.valiktor:valiktor-javatime:0.12.0")
+
+
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 }
 
 tasks.test {
