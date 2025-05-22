@@ -32,6 +32,9 @@ O sistema é dividido em duas experiências principais:
 ## Estrutura
 
 - **Linguagem de Programação/Back-end:** Kotlin + Ktor
-- **Front-end:** HTML, CSS, JavaScript (React)
+- **Banco de Dados:** SQLite
+- **Front-end:** HTML, CSS, JavaScript (React + Vite)
   
-(não sabemos o que vamos fazer aqui socorro Deus)
+## Disclaimer de Uso de Inteligência Artificial
+
+Este projeto utiliza recursos de Inteligência Artificial (IA) para fornecer algumas de suas funcionalidades. O uso das funcionalidades baseadas em IA está sujeito aos termos de uso e políticas de privacidade das plataformas e serviços envolvidos.
