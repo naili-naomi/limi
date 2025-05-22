@@ -26,5 +26,20 @@ fun Route.reviewRoutes(reviewService: ReviewService) {
             call.respond(HttpStatusCode.Created, novaReview)
            // call.respondText("Review adicionada!", status = HttpStatusCode.Created)
         }
+
+        delete("/reviews/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+                ?: return@delete call.respond(HttpStatusCode.BadRequest, "ID inválido")
+
+            val deleted = reviewService.deletarReview(id)
+            if (deleted) {
+                call.respond(HttpStatusCode.NoContent)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Review não encontrada")
+            }
+        }
+
+
+
     }
 }

@@ -28,6 +28,13 @@ class ReviewRepository {
     }
 
     fun deleteReview(id: Int): Boolean = transaction {
-        ReviewEntity.findById(id)?.delete() != null
+        val review = ReviewEntity.findById(id)
+        if (review != null) {
+            review.delete()
+            true
+        } else {
+            false
+        }
     }
+
 }

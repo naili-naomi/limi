@@ -33,5 +33,14 @@ fun Route.userRoutes(userService: UserService) {
             val criado = userService.adicionarUser(novoUsuario)
             call.respond(HttpStatusCode.Created, criado)
         }
+        put("/users/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+                ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")
+
+            val user = call.receive<User>()
+            val atualizado = userService.atualizarUser(id, user)
+            call.respond(atualizado)
+        }
+
     }
 }

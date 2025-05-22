@@ -8,6 +8,8 @@ import org.junit.jupiter.api.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.*
+import org.junit.jupiter.api.Test
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRepositoryIntTest {
@@ -47,5 +49,28 @@ class UserRepositoryIntTest {
     fun `buscar usuario inexistente deve retornar null`() {
         val resultado = repo.buscarPorEmail("naoexiste@exemplo.com")
         assertNull(resultado)
+    }
+
+    @Test
+    fun `updateUser persiste alterações corretamente`() {
+        // cria usuário inicial
+        val original = repo.addUser(User(0, "Pedro", "pedro01", "pedro@ex.com", "senha123"))
+        val updatedData = User(original.id, "Pedro Silva", "pedrosilva", "pedro@ex.com", "novaSenha")
+
+        val updated = repo.updateUser(original.id, updatedData)
+        assertNotNull(updated)
+        assertEquals("Pedro Silva", updated!!.nome)
+        assertEquals("pedrosilva", updated.username)
+    }
+
+    @Test
+    fun `getUserById retorna null após deleteUser`() {
+        // cria e deleta
+        val user = repo.addUser(User(0, "Marta", "marta01", "marta@ex.com", "senha321"))
+        val deleted = repo.deleteUser(user.id)
+        assertTrue(deleted)
+
+        val fetched = repo.getUserById(user.id)
+        assertNull(fetched)
     }
 }

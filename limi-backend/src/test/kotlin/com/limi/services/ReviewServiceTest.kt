@@ -18,10 +18,10 @@ class ReviewServiceTest {
         val saved = input.copy(id = 42)
         every { reviewRepository.addReview(input) } returns saved
 
-        val result = reviewService.adicionarReview(input)
+        val resultado = reviewService.adicionarReview(input)
 
-        assertEquals(42, result.id)
-        assertEquals(input.comentario, result.comentario)
+        assertEquals(42, resultado.id)
+        assertEquals(input.comentario, resultado.comentario)
         verify(exactly = 1) { reviewRepository.addReview(input) }
     }
 
@@ -38,5 +38,31 @@ class ReviewServiceTest {
         assertEquals(2, result.size)
         assertTrue(result.all { it.livroId == 5 })
         verify { reviewRepository.getReviewsByLivroId(5) }
+    }
+
+    @Test
+    fun `deve retornar true ao deletar review existente`() {
+        // dado
+        every { reviewRepository.deleteReview(42) } returns true
+
+        // quando
+        val resultado = reviewService.deletarReview(42)
+
+        // então
+        assertTrue(resultado)
+        verify(exactly = 1) { reviewRepository.deleteReview(42) }
+    }
+
+    @Test
+    fun `deve retornar false ao tentar deletar review inexistente`() {
+
+        every { reviewRepository.deleteReview(99) } returns false
+
+
+        val resultado = reviewService.deletarReview(99)
+
+
+        assertFalse(resultado)
+        verify(exactly = 1) { reviewRepository.deleteReview(99) }
     }
 }

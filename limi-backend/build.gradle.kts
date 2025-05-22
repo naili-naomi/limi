@@ -20,6 +20,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion") // versão conforme a usada
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -41,6 +42,10 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
     implementation("org.valiktor:valiktor-core:0.12.0")
     implementation("org.valiktor:valiktor-javatime:0.12.0")
+    implementation("io.ktor:ktor-server-auth:${ktorVersion}")
+    implementation("io.ktor:ktor-server-auth-jwt:${ktorVersion}")
+    implementation("com.auth0:java-jwt:${ktorVersion}")
+
 
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")

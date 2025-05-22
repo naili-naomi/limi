@@ -21,6 +21,13 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.auth.*
+import com.limi.routes.authRoutes
+import com.limi.config.JwtConfig
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.server.auth.jwt.*
+
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
@@ -28,6 +35,14 @@ fun main() {
     }.start(wait = true)
 }
 
+
+fun Application.configureSecurity() {
+    install(Authentication) {
+        jwt("auth-jwt") {
+            JwtConfig.configureJwt(this)
+        }
+    }
+}
 fun Application.module() {
     // Inicialização do banco
     DatabaseFactory.init(
@@ -46,6 +61,8 @@ fun Application.module() {
         allowMethod(HttpMethod.Delete)
         allowHeader(HttpHeaders.ContentType)
     }
+
+
     val client = HttpClient(CIO)
 
     // Repositórios
@@ -69,6 +86,8 @@ fun Application.module() {
         reviewRoutes(reviewService)
         userRoutes(userService)
         autorRoutes(autorService)
+        authRoutes(UserRepository())
+      //  configureRoutes(externalBookService)
     }
 
     configureErrorHandling()

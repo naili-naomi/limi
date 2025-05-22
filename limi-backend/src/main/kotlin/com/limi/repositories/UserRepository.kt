@@ -18,25 +18,39 @@ class UserRepository {
 
 
 
-    fun buscarPorEmail(email: String): User? {
-        return transaction {
+    fun buscarPorEmail(email: String): User? =
+        transaction {
             UserEntity.find { Users.email eq email }
                 .firstOrNull()
-                ?.let { User(it.id.value, it.nome,  it.username, it.email, it.senha) }
+                ?.toUser()
         }
-    }
 
-    fun getAllUsers(): List<User> {
-        return transaction {
+
+    fun getAllUsers(): List<User> = transaction {
             UserEntity.all().map {
-                User(
-                    id = it.id.value,
-                    nome = it.nome,
-                    email = it.email,
-                    username = it.username,
-                    senha = it.senha
-                )
+               it.toUser()
             }
         }
+
+    fun getUserById(id: Int): User? = transaction {
+        UserEntity.findById(id)?.toUser()
+    }
+
+    fun updateUser(id: Int, updated: User): User? = transaction {
+        UserEntity.findById(id)?.apply {
+            nome = updated.nome
+            username = updated.username
+            email = updated.email
+            senha = updated.senha
+        }?.toUser()
+    }
+
+
+
+    fun deleteUser(id: Int): Boolean = transaction {
+        UserEntity.findById(id)?.let {
+            it.delete()
+            true
+        } ?: false
     }
 }

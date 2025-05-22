@@ -40,3 +40,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Ignorar arquivos temporários do projeto
+src/main/kotlin/com/limi/*.txt
+src/main/kotlin/com/limi/*.sh
+src/test/kotlin/com/limi/*.txt
+src/test/kotlin/com/limi/*.sh
+

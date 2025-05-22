@@ -23,4 +23,9 @@ class ReviewService(private val reviewRepository: ReviewRepository) {
     fun atualizarReview(id: Int, novoComentario: String, novaNota: Int): Review? {
         return reviewRepository.updateReview(id, novoComentario, novaNota)
     }
+
+    fun deletarReview(id: Int): Boolean {
+        return reviewRepository.deleteReview(id)
+    }
+
 }
