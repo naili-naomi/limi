@@ -2,6 +2,7 @@ package com.limi.routes
 
 import com.limi.models.Review
 import com.limi.services.ReviewService
+import com.limi.models.ReviewRequest
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*

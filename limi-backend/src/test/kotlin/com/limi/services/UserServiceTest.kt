@@ -1,6 +1,7 @@
 package com.limi.services
 
 import com.limi.models.User
+import com.limi.validation.validateForCreation
 import com.limi.repositories.UserRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -14,28 +15,60 @@ import com.limi.exceptions.*
 
 
 class UserServiceTest {
-    private val userRepository = mockk<UserRepository>() // Mock
+    private val userRepository = mockk<UserRepository>(relaxed = true)
+    // Mock
     private val service = UserService(userRepository)
 
     @Test
-    fun adicionaEBuscaPorEmail() {
-        // Configura mock
-        val user = User(1, "Ana", "aninha01", "ana@exemplo.com", "Ana")
-        every { userRepository.buscarPorEmail("ana@exemplo.com") } returns user
+    fun `buscarPorEmail deve retornar usuario existente`() {
+        val usuario = User(1, "Ana", "ana01", "ana@ex.com", "senha123")
+        every { userRepository.buscarPorEmail("ana@ex.com") } returns usuario
 
-        val buscado = service.buscarPorEmail("ana@exemplo.com")
-
-        assertNotNull(buscado)
-        assertEquals("Ana", buscado.nome)
+        val resultado = service.buscarPorEmail("ana@ex.com")
+        assertEquals(1, resultado?.id)
+        assertEquals("Ana", resultado?.nome)
     }
 
     @Test
-    fun buscaUserInexistente() {
+    fun `buscarPorEmail deve retornar nulo quando usuario nao existe`() {
         every { userRepository.buscarPorEmail(any()) } returns null
 
-        val buscado = service.buscarPorEmail("naoexiste@teste.com")
-        assertNull(buscado)
+        val resultado = service.buscarPorEmail("inexistente@ex.com")
+        assertEquals(null, resultado)
     }
+
+    @Test
+    fun `adicionarUser deve salvar usuario com senha hashada`() {
+        val novo = User(
+            id = 0,
+            nome = "Teste",
+            username = "teste01",
+            email = "teste@ex.com",
+            senha = "senha123"
+        )
+        // não existe usuário com esse email
+        every { userRepository.buscarPorEmail(novo.email) } returns null
+        // mock adiciona e retorna com id = 1
+        every { userRepository.addUser(match { it.senha.startsWith("$2a$") }) } returns novo.copy(id = 1)
+
+        val resultado = service.adicionarUser(novo)
+
+        verify(exactly = 1) { userRepository.addUser(any()) }
+        assertEquals(1, resultado.id)
+        assertEquals(novo.email, resultado.email)
+    }
+
+    @Test
+    fun `adicionarUser deve falhar se email ja existir`() {
+        val existente = User(1, "Outro", "outro01", "teste@ex.com", "senha123")
+        every { userRepository.buscarPorEmail(existente.email) } returns existente
+
+        assertFailsWith<ValidationException> {
+            service.adicionarUser(existente)
+        }
+    }
+
+
     @Test
     fun `atualizarUser deve atualizar quando usuário existir e email único`() {
         val existing = User(1, "Ana", "ana01", "ana@ex.com", "senha123")
@@ -91,6 +124,5 @@ class UserServiceTest {
         assertTrue(result == false)
         verify(exactly = 1) { userRepository.deleteUser(99) }
     }
-
 
 }

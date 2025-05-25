@@ -39,12 +39,14 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("com.h2database:h2:2.1.214")
     testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.ktor:ktor-server-test-host:${ktorVersion}")
     testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
     implementation("org.valiktor:valiktor-core:0.12.0")
     implementation("org.valiktor:valiktor-javatime:0.12.0")
     implementation("io.ktor:ktor-server-auth:${ktorVersion}")
     implementation("io.ktor:ktor-server-auth-jwt:${ktorVersion}")
     implementation("com.auth0:java-jwt:${ktorVersion}")
+    implementation("org.mindrot:jbcrypt:0.4")
 
 
 

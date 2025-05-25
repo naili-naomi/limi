@@ -22,7 +22,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.auth.*
-import com.limi.routes.authRoutes
 import com.limi.config.JwtConfig
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -30,9 +29,9 @@ import io.ktor.server.auth.jwt.*
 
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        module()
-    }.start(wait = true)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0",
+        module = Application::module)
+    .start(wait = true)
 }
 
 
@@ -62,7 +61,7 @@ fun Application.module() {
         allowHeader(HttpHeaders.ContentType)
     }
 
-
+    configureSecurity()
     val client = HttpClient(CIO)
 
     // Repositórios
@@ -86,7 +85,14 @@ fun Application.module() {
         reviewRoutes(reviewService)
         userRoutes(userService)
         autorRoutes(autorService)
-        authRoutes(UserRepository())
+
+        authenticate("auth-jwt") {
+            reviewRoutes(ReviewService(ReviewRepository()))
+            livroRoutes(LivroService(LivroRepository(), ExternalBookService(client)))
+            // qualquer outra rota que deva exigir login
+        }
+
+
       //  configureRoutes(externalBookService)
     }
 
