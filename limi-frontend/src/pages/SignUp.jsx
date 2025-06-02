@@ -1,48 +1,80 @@
-import { useState } from 'react';
+// src/pages/SignUp.jsx
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SignUp({ onSignUp }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName]         = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError]       = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aqui você pode integrar com sua API de cadastro
     if (!name || !email || !password) {
       setError('Preencha todos os campos.');
       return;
     }
     setError('');
-    if (onSignUp) onSignUp({ name, email, password });
+
+    // Chama a função enviada por props (de App.jsx). Se onSignUp() retornar true, redireciona.
+    const sucesso = onSignUp ? onSignUp({ name, email, password }) : false;
+    if (sucesso) {
+      navigate('/login');
+    } else {
+      setError('Não foi possível cadastrar. Tente outro email.');
+    }
   };
 
   return (
-    <div className="signup-container">
+    <div className="form-container">
       <h2>Cadastro</h2>
-      {error && <p style={{color:'red'}}>{error}</p>}
+
+      {error && <div className="error-message">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Nome:</label>
-          <input type="text" value={name}
-                 onChange={e => setName(e.target.value)}
-                 required />
+          <label htmlFor="signup-name">Nome:</label>
+          <input
+            id="signup-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
         </div>
+
         <div>
-          <label>Email:</label>
-          <input type="email" value={email}
-                 onChange={e => setEmail(e.target.value)}
-                 required />
+          <label htmlFor="signup-email">Email:</label>
+          <input
+            id="signup-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
+
         <div>
-          <label>Senha:</label>
-          <input type="password" value={password}
-                 onChange={e => setPassword(e.target.value)}
-                 required />
+          <label htmlFor="signup-password">Senha:</label>
+          <input
+            id="signup-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
+
         <button type="submit">Cadastrar</button>
       </form>
-      <p>Já tem conta? <a href="/login">Faça login</a></p>
+
+      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+        Já tem conta?{' '}
+        <Link to="/login" style={{ color: '#5674fc', textDecoration: 'none' }}>
+          Faça login
+        </Link>
+      </p>
     </div>
   );
 }
