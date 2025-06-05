@@ -2,7 +2,7 @@
   max-width: 350px;
   margin: 2rem auto;
   padding: 2rem 2rem 1.5rem 2rem;
-  background: #fff;
+  background: #e6ce81;
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.09);
 }
@@ -11,6 +11,18 @@
   margin-bottom: 1.5rem;
   text-align: center;
   color: #222;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  border: #555 solid 1px;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .form-container form > div {
@@ -51,7 +63,7 @@
   background: #5674fc;
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   font-size: 1.07rem;
   font-weight: 600;
   cursor: pointer;

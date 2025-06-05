@@ -1,0 +1,30 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.app-container {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f5f6fa;
+  min-height: 100vh;
+
+    align-items: center;
+}
+
+header, footer {
+  background: #fafafa;
+  border-color: #ddd;
+}
+
+main {
+  padding: 2rem 1rem;
+}
+
+h1 {
+  color: #222;
+}
