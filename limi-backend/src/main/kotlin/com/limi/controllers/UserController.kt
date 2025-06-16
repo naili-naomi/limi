@@ -42,13 +42,18 @@ fun Route.userRoutes(userService: UserService) {
 
             try {
                 val token = userService.login(loginRequest)
-                call.respond(HttpStatusCode.OK, mapOf("token" to token))
+                val usuario = userService.buscarPorEmail(loginRequest.email)
+                    ?: throw AuthenticationException("Usuário não encontrado após login")
+
+                call.respond(HttpStatusCode.OK, mapOf("token" to token, "nome" to usuario.nome))
             } catch (e: AuthenticationException) {
                 call.respond(HttpStatusCode.Unauthorized, mapOf("error" to e.message))
             } catch (e: Exception) {
+                e.printStackTrace() // <- MOSTRA O ERRO REAL NO TESTE
                 call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Erro interno"))
             }
         }
+
         put("/users/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
                 ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")

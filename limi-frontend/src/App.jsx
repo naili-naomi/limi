@@ -1,20 +1,40 @@
 // src/App.jsx
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
-import './App.css'
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
-  // Exemplo simplificado: você mantém aqui as funções onLogin e onSignUp
-  const handleLogin = ({ email, password }) => {
-    if (email === 'admin@exemplo.com' && password === '123456') {
-      return true;
+  const [logado, setLogado] = useState(false);
+  const [nome, setNome] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const nomeSalvo = localStorage.getItem('nome');
+    if (token && nomeSalvo) {
+      setLogado(true);
+      setNome(nomeSalvo);
     }
-    return false;
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('nome');
+    setLogado(false);
+    setNome('');
+    navigate('/login');
   };
+
+    const handleLogin = ({ token, nome }) => {
+      localStorage.setItem('token', token);
+      localStorage.setItem('nome', nome);
+      setLogado(true);
+      setNome(nome);
+    };
 
   const handleSignUp = ({ name, email, password }) => {
     if (email !== 'jaexiste@dominio.com') {
@@ -22,6 +42,14 @@ function App() {
     }
     return false;
   };
+
+    const handleLoginSuccess = (token, nomeDoUsuario) => {
+      localStorage.setItem('token', token);
+      localStorage.setItem('nome', nomeDoUsuario);
+      setLogado(true);
+      setNome(nomeDoUsuario);
+      navigate('/'); // redireciona pra home ou onde quiser
+    };
 
   return (
     <div className="app-container">
@@ -45,36 +73,36 @@ function App() {
             Catálogo de Livros
           </Link>
         </h1>
-        <nav style={{ marginLeft: 'auto' }}>
-          <Link
-            to="/login"
-            style={{ marginRight: '1rem', color: '#5674fc', textDecoration: 'none' }}
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            style={{ color: '#5674fc', textDecoration: 'none' }}
-          >
-            Cadastro
-          </Link>
+
+        {/* ======= NAVEGAÇÃO DINÂMICA ======= */}
+        <nav style={{ marginLeft: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {!logado ? (
+            <>
+              <Link to="/login" style={{ color: '#5674fc', textDecoration: 'none' }}>
+                Login
+              </Link>
+              <Link to="/signup" style={{ color: '#5674fc', textDecoration: 'none' }}>
+                Cadastro
+              </Link>
+            </>
+          ) : (
+            <>
+              <span style={{ color: '#333' }}>Bem-vindo, {nome}</span>
+              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#5674fc', cursor: 'pointer' }}>
+                Sair
+              </button>
+            </>
+          )}
         </nav>
       </header>
 
-      {/* ======= ÁREA PRINCIPAL COM ROTAS ======= */}
+      {/* ======= ROTAS ======= */}
       <main style={{ minHeight: '70vh', padding: '2rem 1rem' }}>
         <Routes>
           <Route path="/" element={<Home />} />
-
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
-
-          {/* Nova rota para “Esqueci a senha” */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
-
-          {/* Opcional: rota “catch-all” (404) */}
-          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </main>
 
