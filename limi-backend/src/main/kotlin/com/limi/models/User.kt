@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 @Serializable
 data class User(
-    val id: Int,
+    val id: Int = 0, // ou null se for Int?
     val nome: String,
     val username: String,
     val email: String,

@@ -1,6 +1,6 @@
-// src/pages/SignUp.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { cadastrarUsuario } from '../api';
 import './forms.css';
 
 function SignUp({ onSignUp }) {
@@ -10,7 +10,7 @@ function SignUp({ onSignUp }) {
   const [error, setError]       = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !email || !password) {
       setError('Preencha todos os campos.');
@@ -19,11 +19,16 @@ function SignUp({ onSignUp }) {
     setError('');
 
     // Chama a função enviada por props (de App.jsx). Se onSignUp() retornar true, redireciona.
-    const sucesso = onSignUp ? onSignUp({ name, email, password }) : false;
-    if (sucesso) {
+    try {
+      await cadastrarUsuario({
+        nome: name,
+        username: name.toLowerCase().replace(/\s+/g, ''),
+        email,
+        senha: password
+      });
       navigate('/login');
-    } else {
-      setError('Não foi possível cadastrar. Tente outro email.');
+    } catch (err) {
+      setError(err.message);
     }
   };
 
