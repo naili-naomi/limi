@@ -2,10 +2,11 @@
 import React from 'react';
 import ListGroup from '../components/ListGroup';
 
-function Home() {
+function Home({ items }) {
   return (
     <div>
-      <ListGroup />
+      <h2>Livros</h2>
+      <ListGroup items={items} />
     </div>
   );
 }

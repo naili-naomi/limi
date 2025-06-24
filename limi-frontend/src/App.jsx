@@ -5,6 +5,7 @@ import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import ListGroup from './components/ListGroup';
 import ForgotPassword from './pages/ForgotPassword';
 import logo from './assets/logo_horizontal_transparente.png';
 
@@ -51,6 +52,15 @@ function App() {
     setNome(nomeDoUsuario);
     navigate('/'); // redireciona pra home ou onde quiser
   };
+
+  const items = [
+    { title: "Livro 1", image: "https://via.placeholder.com/240x320" },
+    { title: "Livro 2" }, // sem imagem, usará o placeholder
+    { title: "Livro 3", image: "https://via.placeholder.com/240x320" },
+    { title: "Livro 1", image: "https://via.placeholder.com/240x320" },
+    { title: "Livro 2" }, // sem imagem, usará o placeholder
+    { title: "Livro 3", image: "https://via.placeholder.com/240x320" }
+  ];
 
   return (
     <div className="app-container">
@@ -102,7 +112,7 @@ function App() {
       {/* ======= ROTAS ======= */}
       <main style={{ minHeight: '70vh', padding: '2rem 1rem' }}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home items={items} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
