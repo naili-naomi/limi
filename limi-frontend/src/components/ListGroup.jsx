@@ -1,28 +1,28 @@
-import { Fragment } from "react";
+import React from 'react';
+import './ListGroup.css';
 
-function ListGroup() {
-    const items = ["An item", "A second item", "A third item", "A fourth item", "And a fifth one"];
-
-    if (items.length === 0) {
-        return <p>No items found</p>;
-    }
-
-    return (
-        <Fragment>
-            <h1>List</h1>
-            <ul className="list-group">
-                {items.map((item, index) => (
-                    <li
-                        className="list-group-item"
-                        key={item}
-                        onClick={() => console.log(item, index)}
-                    >
-                        {item}
-                    </li>
-                ))}
-            </ul>
-        </Fragment>
-    );
+function ListGroup({ items, heading, onSelectItem }) {
+  return (
+    <div className="list-group-container">
+      <h1>{heading}</h1>
+      {items.length === 0 && <p>No items found</p>}
+      <ul className="list-group-grid">
+        {items.map((item, index) => (
+          <li
+            key={index}
+            className="list-group-item"
+            onClick={() => onSelectItem(item)}
+          >
+            <div className="book-cover-placeholder">Cover</div>
+            <div className="book-card-content">
+              <h3 className="book-title">{item.title}</h3>
+              <p className="book-author">{item.author}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default ListGroup;
