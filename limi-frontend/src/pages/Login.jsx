@@ -1,6 +1,7 @@
-// src/pages/Login.jsx
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { loginUsuario } from '../api';
 import './forms.css';
 
 function Login({ onLogin }) {
@@ -9,20 +10,28 @@ function Login({ onLogin }) {
   const [error, setError]       = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+
+   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
+
     if (!email || !password) {
       setError('Preencha todos os campos.');
       return;
     }
     setError('');
 
-    const sucesso = onLogin ? onLogin({ email, password }) : false;
-    if (sucesso) {
-      navigate('/'); // redireciona para Home (catálogo)
-    } else {
-      setError('Credenciais inválidas.');
+    try {
+      const { token, nome } = await loginUsuario({ email, senha: password });
+     onLogin({token, nome});
+
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
     }
+
+
   };
 
   return (

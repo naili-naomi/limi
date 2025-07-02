@@ -2,6 +2,7 @@ package com.limi.config
 
 import com.limi.exceptions.ValidationException
 import com.limi.exceptions.NotFoundException
+import com.limi.exceptions.AuthenticationException
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
@@ -25,6 +26,12 @@ fun Application.configureErrorHandling() {
             call.respond(
                 HttpStatusCode.NotFound,
                 mapOf("error" to (cause.message ?: "Recurso não encontrado"))
+            )
+        }
+        exception<AuthenticationException> { call, cause ->
+            call.respond(
+                HttpStatusCode.Unauthorized,
+                mapOf("error" to (cause.message ?: "Não autorizado"))
             )
         }
         exception<Exception> { call, cause ->

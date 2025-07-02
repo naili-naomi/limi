@@ -1,19 +1,41 @@
 // src/App.jsx
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
-import './App.css'
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import ListGroup from './components/ListGroup';
 import ForgotPassword from './pages/ForgotPassword';
+import logo from './assets/logo_horizontal_transparente.png';
 
 function App() {
-  // Exemplo simplificado: você mantém aqui as funções onLogin e onSignUp
-  const handleLogin = ({ email, password }) => {
-    if (email === 'admin@exemplo.com' && password === '123456') {
-      return true;
+  const [logado, setLogado] = useState(false);
+  const [nome, setNome] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const nomeSalvo = localStorage.getItem('nome');
+    if (token && nomeSalvo) {
+      setLogado(true);
+      setNome(nomeSalvo);
     }
-    return false;
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('nome');
+    setLogado(false);
+    setNome('');
+    navigate('/login');
+  };
+
+  const handleLogin = ({ token, nome }) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('nome', nome);
+    setLogado(true);
+    setNome(nome);
   };
 
   const handleSignUp = ({ name, email, password }) => {
@@ -23,72 +45,83 @@ function App() {
     return false;
   };
 
+  const handleLoginSuccess = (token, nomeDoUsuario) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('nome', nomeDoUsuario);
+    setLogado(true);
+    setNome(nomeDoUsuario);
+    navigate('/'); // redireciona pra home ou onde quiser
+  };
+
+  const items = [
+    { title: "Livro 1", image: "https://via.placeholder.com/240x320" },
+    { title: "Livro 2" }, // sem imagem, usará o placeholder
+    { title: "Livro 3", image: "https://via.placeholder.com/240x320" },
+    { title: "Livro 1", image: "https://via.placeholder.com/240x320" },
+    { title: "Livro 2" }, // sem imagem, usará o placeholder
+    { title: "Livro 3", image: "https://via.placeholder.com/240x320" }
+  ];
+
   return (
     <div className="app-container">
       {/* ======= HEADER ======= */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '1rem',
-          borderBottom: '1px solid #ddd',
-          background: '#fafafa',
-        }}
-      >
-        <img
-          src="./assets/nova_logo.jpeg"
-          alt="Logo"
-          style={{ height: 48, marginRight: 16 }}
-        />
-        <h1 style={{ fontSize: 24, margin: 0 }}>
-          <Link to="/" style={{ textDecoration: 'none', color: '#222' }}>
-            Catálogo de Livros
-          </Link>
-        </h1>
-        <nav style={{ marginLeft: 'auto' }}>
-          <Link
-            to="/login"
-            style={{ marginRight: '1rem', color: '#5674fc', textDecoration: 'none' }}
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            style={{ color: '#5674fc', textDecoration: 'none' }}
-          >
-            Cadastro
-          </Link>
+      <header>
+        <Link to="/">
+          <img
+            src={logo}
+            alt="Logo"
+            className="logo"
+          />
+        </Link>
+
+        {/* ======= BARRA DE PESQUISA ======= */}
+        <form className="search-form" onSubmit={e => { e.preventDefault(); /* Adicione lógica de busca aqui */ }}>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Pesquisar livros..."
+            // value={searchTerm}
+            // onChange={e => setSearchTerm(e.target.value)}
+          />
+          <button type="submit" className="search-btn">Buscar</button>
+        </form>
+
+        {/* ======= NAVEGAÇÃO DINÂMICA ======= */}
+        <nav className="nav-header">
+          {!logado ? (
+            <>
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <h3> | </h3>
+              <Link to="/signup" className="nav-link">
+                Cadastro
+              </Link>
+            </>
+          ) : (
+            <>
+              <span className="nav-bemvindo">Bem-vindo, {nome}</span>
+              <button onClick={handleLogout} className="nav-sair">
+                Sair
+              </button>
+            </>
+          )}
         </nav>
       </header>
 
-      {/* ======= ÁREA PRINCIPAL COM ROTAS ======= */}
+      {/* ======= ROTAS ======= */}
       <main style={{ minHeight: '70vh', padding: '2rem 1rem' }}>
         <Routes>
-          <Route path="/" element={<Home />} />
-
+          <Route path="/" element={<Home items={items} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
-
-          {/* Nova rota para “Esqueci a senha” */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
-
-          {/* Opcional: rota “catch-all” (404) */}
-          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </main>
 
       {/* ======= FOOTER ======= */}
-      <footer
-        style={{
-          borderTop: '1px solid #ddd',
-          background: '#fafafa',
-          padding: '1rem',
-          textAlign: 'center',
-          fontSize: 14,
-        }}
-      >
-        © {new Date().getFullYear()} Catálogo de Livros
+      <footer >
+        © {new Date().getFullYear()} Limi. Todos os direitos reservados.
       </footer>
     </div>
   );

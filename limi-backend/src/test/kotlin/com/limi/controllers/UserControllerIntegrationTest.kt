@@ -33,10 +33,6 @@ class UserControllerIntegrationTest {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         DatabaseFactory.init()
 
-        JwtConfig.initialize(
-            secret = "test-secret",
-            validityInMs = 36_000_00  // qualquer valor de validade razoável
-        )
 
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -109,29 +105,44 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    fun `login válido retorna token`() = testApplication {
+    fun `login válido retorna token e nome`() = testApplication {
         environment {
             config = MapApplicationConfig("ktor.development" to "false")
         }
         application { testModule() }
 
+        // Cadastro do usuário
         client.post("/usuarios/cadastro") {
             contentType(ContentType.Application.Json)
             setBody("""{
-                "id":0,
-                "nome":"Carlos",
-                "username":"carlos01",
-                "email":"carlos@teste.com",
-                "senha":"senha123"
-            }""")
+            "id":0,
+            "nome":"Carlos",
+            "username":"carlos01",
+            "email":"carlos@teste.com",
+            "senha":"senha123"
+        }""")
         }
+
+        // Login
         val loginResp = client.post("/usuarios/login") {
             contentType(ContentType.Application.Json)
             setBody("""{"email":"carlos@teste.com","senha":"senha123"}""")
         }
+
+        // Verificações
         assertEquals(HttpStatusCode.OK, loginResp.status)
-        assertTrue(loginResp.bodyAsText().contains("token"))
+
+        val body = loginResp.bodyAsText()
+        System.out.println("Resposta do login: $body")
+
+
+        // Verifica se a resposta contém "token"
+        assertTrue(body.contains("token"), "Resposta não contém token")
+
+        // Verifica se a resposta contém "Carlos"
+        assertTrue(body.contains("Carlos"), "Resposta não contém o nome do usuário")
     }
+
 
     @Test
     fun `login inválido retorna 401`() = testApplication {
