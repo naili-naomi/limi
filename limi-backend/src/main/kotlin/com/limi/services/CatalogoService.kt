@@ -2,6 +2,10 @@ package com.limi.services  // Pacote corrigido
 
 import com.limi.models.Livro
 import com.limi.repositories.LivroRepository  // Import do repositório
+import com.limi.clients.buscarImagemPorTitulo
+
+
+
 
 class CatalogoService(private val livroRepository: LivroRepository) {  // Recebe repositório via construtor
 
@@ -18,6 +22,9 @@ class CatalogoService(private val livroRepository: LivroRepository) {  // Recebe
         return livroRepository.getAllLivros()
     }
     fun adicionarLivro(livro: Livro) {
-        livroRepository.addLivro(livro)
+        val urlImagem = buscarImagemPorTitulo(livro.titulo)
+        val livroComImagem = livro.copy(urlImagem = urlImagem)
+        livroRepository.addLivro(livroComImagem)
     }
+
 }

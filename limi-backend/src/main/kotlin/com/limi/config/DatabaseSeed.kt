@@ -4,6 +4,8 @@ import com.limi.models.LivroEntity
 import com.limi.models.AutorEntity
 import com.limi.models.GeneroEntity
 import com.limi.models.LivroGenero
+import com.limi.clients.buscarImagemPorTitulo
+import com.limi.clients.gerarPlaceholder
 import com.limi.models.Autores
 import com.limi.models.Generos
 import org.jetbrains.exposed.sql.and
@@ -169,6 +171,8 @@ object DatabaseSeed {
                     autor = autorEntity
                     anoPublicacao = seed.anoPublicacao
                     sinopse = seed.sinopse
+                    urlImagem = buscarImagemPorTitulo(seed.titulo)
+                        ?: gerarPlaceholder(seed.titulo, seed.autor)
                 }
 
                 // Adiciona gêneros
