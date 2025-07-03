@@ -29,3 +29,21 @@ export async function loginUsuario({ email, senha }) {
 
   return await response.json(); // deve conter { token: "..." }
 }
+
+export async function addBook(bookData, token) {
+  const response = await fetch(`${API_BASE}/livros`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(bookData)
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao adicionar livro');
+  }
+
+  return await response.json();
+}

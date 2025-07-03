@@ -8,6 +8,7 @@ import SignUp from './pages/SignUp';
 import ListGroup from './components/ListGroup';
 import ForgotPassword from './pages/ForgotPassword';
 import BookDetailsPage from './pages/BookDetailsPage';
+import AddBookPage from './pages/AddBookPage';
 import logo from './assets/logo_horizontal_transparente.png';
 
 function App() {
@@ -102,6 +103,9 @@ function App() {
           ) : (
             <>
               <span className="nav-bemvindo">Bem-vindo, {nome}</span>
+              <Link to="/add-book" className="nav-link" style={{ color: '#a30045' }}>
+                Adicionar Livro
+              </Link>
               <button onClick={handleLogout} className="nav-sair">
                 Sair
               </button>
@@ -118,6 +122,7 @@ function App() {
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/book/:title" element={<BookDetailsPage />} />
+          <Route path="/add-book" element={<AddBookPage />} />
         </Routes>
       </main>
 
