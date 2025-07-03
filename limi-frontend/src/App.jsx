@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import ListGroup from './components/ListGroup';
 import ForgotPassword from './pages/ForgotPassword';
+import BookDetailsPage from './pages/BookDetailsPage';
 import logo from './assets/logo_horizontal_transparente.png';
 
 function App() {
@@ -90,11 +91,11 @@ function App() {
         <nav className="nav-header">
           {!logado ? (
             <>
-              <Link to="/login" className="nav-link">
+              <Link to="/login" className="nav-link" style={{ color: '#a30045' }}>
                 Login
               </Link>
               <h3> | </h3>
-              <Link to="/signup" className="nav-link">
+              <Link to="/signup" className="nav-link" style={{ color: '#a30045' }}>
                 Cadastro
               </Link>
             </>
@@ -116,6 +117,7 @@ function App() {
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/book/:title" element={<BookDetailsPage />} />
         </Routes>
       </main>
 

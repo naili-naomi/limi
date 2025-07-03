@@ -1,24 +1,31 @@
-// src/pages/Home.jsx
 import React from 'react';
 import ListGroup from '../components/ListGroup';
 
 function Home() {
   const books = [
-    { title: "Capitães de Areia", author: "Jorge Amado" },
-    { title: "Dom Casmurro", author: "Machado de Assis" },
-    { title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling" },
-    { title: "Senhor dos Anéis: A Sociedade do Anel", author: "J.R.R. Tolkien" },
-    { title: "O Exorcista", author: "William Peter Blatty" },
-    { title: "O Cemitério", author: "Stephen King" },
-    { title: "Orgulho e Preconceito", author: "Jane Austen" },
-    { title: "Duna", author: "Frank Herbert" },
-    { title: "O Assassinato de Roger Ackroyd", author: "Agatha Christie" },
-    { title: "Longa Caminhada até a Liberdade", author: "Nelson Mandela" },
-    { title: "Sapiens: Uma Breve História da Humanidade", author: "Yuval Noah Harari" },
-    { title: "Guerra e Paz", author: "Liev Tolstói" },
-    { title: "Cem Sonetos de Amor", author: "Pablo Neruda" },
-    { title: "O Poder do Hábito", author: "Charles Duhigg" },
-    { title: "Garota Exemplar", author: "Gillian Flynn" }
+    { title: "Percy Jackson & the Olympians: The Lightning Thief", author: "Rick Riordan" },
+    { title: "The Mortal Instruments: City of Bones", author: "Cassandra Clare" },
+    { title: "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe", author: "C.S. Lewis" },
+    { title: "Harry Potter and the Sorcerer's Stone", author: "J.K. Rowling" },
+    { title: "Heartstopper", author: "Alice Oseman" },
+    { title: "Cemetery Boys", author: "Aiden Thomas" },
+    { title: "Fazendo Meu Filme 1: A Estreia de Fani", author: "Paula Pimenta" },
+    { title: "Terra Sonâmbula", author: "Mia Couto" },
+    { title: "The Kane Chronicles: The Red Pyramid", author: "Rick Riordan" },
+    { title: "Magnus Chase and the Gods of Asgard: The Sword of Summer", author: "Rick Riordan" },
+    { title: "The Trials of Apollo: The Hidden Oracle", author: "Rick Riordan" },
+    { title: "The Hunger Games", author: "Suzanne Collins" },
+    { title: "To All the Boys I've Loved Before", author: "Jenny Han" },
+    { title: "Six of Crows", author: "Leigh Bardugo" },
+    { title: "The Cruel Prince", author: "Holly Black" },
+    { title: "Children of Blood and Bone", author: "Tomi Adeyemi" },
+    { title: "A Court of Thorns and Roses", author: "Sarah J. Maas" },
+    { title: "The Maze Runner", author: "James Dashner" },
+    { title: "Shadow and Bone", author: "Leigh Bardugo" },
+    { title: "An Ember in the Ashes", author: "Sabaa Tahir" },
+    { title: "The Giver", author: "Lois Lowry" },
+    { title: "Miss Peregrine's Home for Peculiar Children", author: "Ransom Riggs" },
+    { title: "Eleanor & Park", author: "Rainbow Rowell" }
   ];
 
   const handleSelectItem = (item) => {
