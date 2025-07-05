@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { cadastrarUsuario } from '../api';
+import Toast from '../components/Toast'; // Importe o Toast
 import './SignUp.css';
 
 function SignUp({ onSignUp }) {
@@ -8,6 +9,7 @@ function SignUp({ onSignUp }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [toast, setToast] = useState({ message: '', type: '' }); // Estado para o Toast
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,7 +27,8 @@ function SignUp({ onSignUp }) {
         email,
         senha: password
       });
-      navigate('/login');
+      setToast({ message: 'Cadastro realizado com sucesso!', type: 'success' });
+      setTimeout(() => navigate('/login'), 3000); // Redireciona após o toast
     } catch (err) {
       setError(err.message);
     }
@@ -33,6 +36,7 @@ function SignUp({ onSignUp }) {
 
   return (
     <div className="signup-container">
+      <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: '', type: '' })} />
       <div className="signup-form">
         <h2>Cadastro</h2>
         {error && <div className="error-message">{error}</div>}

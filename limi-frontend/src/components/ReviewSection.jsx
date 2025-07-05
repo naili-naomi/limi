@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Toast from './Toast';
 import './ReviewSection.css';
 
 function ReviewSection({ bookTitle, isLoggedIn }) {
@@ -6,6 +7,7 @@ function ReviewSection({ bookTitle, isLoggedIn }) {
   const [newReviewText, setNewReviewText] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
+  const [toast, setToast] = useState({ message: '', type: '' });
 
   useEffect(() => {
     // In a real application, you would fetch reviews for bookTitle from your backend
@@ -43,7 +45,8 @@ function ReviewSection({ bookTitle, isLoggedIn }) {
 
     setReviews([...reviews, newReview]);
     setNewReviewText('');
-    setReviewRating(0);
+    setNewReviewRating(0);
+    setToast({ message: 'Avaliação enviada com sucesso!', type: 'success' });
   };
 
   const renderStars = (rating) => {
@@ -58,6 +61,7 @@ function ReviewSection({ bookTitle, isLoggedIn }) {
 
   return (
     <div className="review-section-container">
+      <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: '', type: '' })} />
       <h3>Reviews</h3>
       <div className="average-rating">
         Average Rating: {averageRating.toFixed(1)} / 5 {renderStars(averageRating)}

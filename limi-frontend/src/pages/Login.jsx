@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUsuario } from '../api';
+import Toast from '../components/Toast';
 import './Login.css';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [toast, setToast] = useState({ message: '', type: '' });
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,7 +24,8 @@ function Login({ onLogin }) {
       const { token, nome } = await loginUsuario({ email, senha: password });
       onLogin({ token, nome });
 
-      navigate('/');
+      setToast({ message: `Bem-vindo, ${nome}!`, type: 'success' });
+      setTimeout(() => navigate('/'), 3000);
     } catch (err) {
       setError(err.message);
     }
@@ -30,6 +33,7 @@ function Login({ onLogin }) {
 
   return (
     <div className="login-container">
+      <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: '', type: '' })} />
       <div className="login-form">
         <h2>Login</h2>
         {error && <div className="error-message">{error}</div>}

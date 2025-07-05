@@ -9,6 +9,7 @@ import ListGroup from './components/ListGroup';
 import ForgotPassword from './pages/ForgotPassword';
 import BookDetailsPage from './pages/BookDetailsPage';
 import AddBookPage from './pages/AddBookPage';
+import UserProfile from './pages/UserProfile'; // Importe a nova página
 import logo from './assets/logo_horizontal_transparente.png';
 
 function App() {
@@ -55,15 +56,6 @@ function App() {
     navigate('/'); // redireciona pra home ou onde quiser
   };
 
-  const items = [
-    { title: "Livro 1", image: "https://via.placeholder.com/240x320" },
-    { title: "Livro 2" }, // sem imagem, usará o placeholder
-    { title: "Livro 3", image: "https://via.placeholder.com/240x320" },
-    { title: "Livro 1", image: "https://via.placeholder.com/240x320" },
-    { title: "Livro 2" }, // sem imagem, usará o placeholder
-    { title: "Livro 3", image: "https://via.placeholder.com/240x320" }
-  ];
-
   return (
     <div className="app-container">
       {/* ======= HEADER ======= */}
@@ -95,7 +87,7 @@ function App() {
               <Link to="/login" className="nav-link" style={{ color: '#a30045' }}>
                 Login
               </Link>
-              <h3> | </h3>
+              <h3 id='separator'> | </h3>
               <Link to="/signup" className="nav-link" style={{ color: '#a30045' }}>
                 Cadastro
               </Link>
@@ -105,6 +97,9 @@ function App() {
               <span className="nav-bemvindo">Bem-vindo, {nome}</span>
               <Link to="/add-book" className="nav-link" style={{ color: '#a30045' }}>
                 Adicionar Livro
+              </Link>
+              <Link to="/profile" className="nav-link user-icon" title="Meu Perfil">
+                👤
               </Link>
               <button onClick={handleLogout} className="nav-sair">
                 Sair
@@ -123,6 +118,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/book/:titulo" element={<BookDetailsPage />} />
           <Route path="/add-book" element={<AddBookPage />} />
+          <Route path="/profile" element={<UserProfile />} /> {/* Adicione a nova rota */}
         </Routes>
       </main>
 
