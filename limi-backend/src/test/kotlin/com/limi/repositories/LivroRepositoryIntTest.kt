@@ -3,6 +3,10 @@ package com.limi.repositories
 import com.limi.config.DatabaseFactory
 import com.limi.config.DatabaseSeed
 import com.limi.models.*
+import io.ktor.client.* 
+import io.ktor.client.engine.cio.* 
+import io.ktor.client.plugins.contentnegotiation.* 
+import io.ktor.serialization.kotlinx.json.json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -16,10 +20,15 @@ import kotlin.test.assertNotNull
 class LivroRepositoryIntTest {
     private lateinit var repo: LivroRepository
     private lateinit var testDb: Database
+    private lateinit var client: HttpClient
 
     @BeforeAll
     fun setupDb() {
-        // Cria um banco H2 em memória
+        client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
         testDb = Database.connect(
             "jdbc:h2:mem:test_${UUID.randomUUID()};DB_CLOSE_DELAY=-1",
             driver = "org.h2.Driver"
@@ -30,15 +39,8 @@ class LivroRepositoryIntTest {
     fun setup() {
         repo = LivroRepository()
         transaction(testDb) {
-            // Cria as tabelas necessárias
-            SchemaUtils.create(  Autores,
-                Users,
-                Generos,
-                Livros,
-                LivroGenero,
-                Reviews)
-            // Insere dados iniciais
-            DatabaseSeed.seedLivrosIniciais()
+            SchemaUtils.create(Autores, Users, Generos, Livros, LivroGenero, Reviews)
+            DatabaseSeed.seedLivrosIniciais(client)
         }
     }
 

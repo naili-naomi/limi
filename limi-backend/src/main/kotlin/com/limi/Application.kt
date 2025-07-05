@@ -1,5 +1,6 @@
 package com.limi
 
+import com.limi.config.DatabaseSeed
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -19,8 +20,8 @@ import com.limi.config.configureErrorHandling
 import com.limi.services.ExternalBookService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.auth.*
 import com.limi.config.JwtConfig
 import com.auth0.jwt.JWT
@@ -43,10 +44,17 @@ fun Application.configureSecurity() {
     }
 }
 fun Application.module() {
+    val client = HttpClient(CIO) {
+        install(ClientContentNegotiation) {
+            json()
+        }
+    }
+
     // Inicialização do banco
     DatabaseFactory.init(
-      "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db",
-        "org.sqlite.JDBC"
+        client = client,
+        url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db",
+        driver = "org.sqlite.JDBC"
     )
 
     // Plugins
@@ -62,7 +70,6 @@ fun Application.module() {
     }
 
     configureSecurity()
-    val client = HttpClient(CIO)
 
     // Repositórios
     val livroRepository = LivroRepository()

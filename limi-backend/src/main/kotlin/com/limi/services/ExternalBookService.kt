@@ -7,22 +7,30 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-private data class GoogleBooksResponse(
+data class GoogleBooksResponse(
     val totalItems: Int,
     val items: List<Volume> = emptyList()
 )
 
 @Serializable
-private data class Volume(
+data class Volume(
     val volumeInfo: VolumeInfo
 )
 
 @Serializable
-private data class VolumeInfo(
+data class VolumeInfo(
     val title: String? = null,
     val authors: List<String>? = null,
     @SerialName("publishedDate") val publishedDate: String? = null,
-    val description: String? = null
+    val publisher: String? = null,
+    val description: String? = null,
+    val pageCount: Int? = null,
+    val imageLinks: ImageLinks? = null
+)
+
+@Serializable
+data class ImageLinks(
+    val thumbnail: String?
 )
 
 /**
@@ -41,5 +49,13 @@ class ExternalBookService(private val client: HttpClient) {
         val url = "https://www.googleapis.com/books/v1/volumes?q=intitle:$query"
         val resp: GoogleBooksResponse = client.get(url).body()
         return resp.totalItems > 0
+    }
+
+    // Função para buscar detalhes completos
+    suspend fun getBookDetailsByTitle(title: String): VolumeInfo? {
+        val query = title.replace(" ", "+")
+        val url = "https://www.googleapis.com/books/v1/volumes?q=intitle:$query&maxResults=1"
+        val resp: GoogleBooksResponse = client.get(url).body()
+        return resp.items.firstOrNull()?.volumeInfo
     }
 }

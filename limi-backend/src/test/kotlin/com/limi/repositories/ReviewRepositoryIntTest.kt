@@ -4,15 +4,16 @@ import com.limi.config.DatabaseFactory
 import com.limi.models.Livro
 import com.limi.models.Review
 import com.limi.models.User
-import org.jetbrains.exposed.sql.Database
+import io.ktor.client.* 
+import io.ktor.client.engine.cio.* 
+import io.ktor.client.plugins.contentnegotiation.* 
+import io.ktor.serialization.kotlinx.json.json
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
-import kotlin.test.*
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ReviewRepositoryIntTest {
@@ -25,8 +26,16 @@ class ReviewRepositoryIntTest {
 
     @BeforeAll
     fun setup() {
-        Database.connect("jdbc:h2:mem:test-reviews;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
-        DatabaseFactory.init()
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        DatabaseFactory.init(
+            client = client,
+            url = "jdbc:h2:mem:test-reviews;DB_CLOSE_DELAY=-1", 
+            driver = "org.h2.Driver"
+        )
 
         repo = ReviewRepository()
         livroRepo = LivroRepository()
@@ -35,7 +44,7 @@ class ReviewRepositoryIntTest {
         // Insere um livro e um usuário no banco para associar à review
         transaction {
             val livro = livroRepo.addLivro(
-                Livro(0, "Dom Casmurro", "Machado de Assis", 1899, "Clássico da literatura", listOf("Romance"))
+                Livro(0, "Dom Casmurro", "Machado de Assis", 1899, "Clássico da literatura", null, listOf("Romance"))
             )
             val user = userRepo.addUser(
                 User(0, "Carlos", "carluxo", "carlos@teste.com", "senha123")
@@ -66,8 +75,6 @@ class ReviewRepositoryIntTest {
 
     @Test
     fun `deve deletar review e não retornar mais nada`() {
-        // prepara: insere um livro e um usuário (já feito no @BeforeAll)
-        // insere uma review para testar o delete
         val criada = repo.addReview(
             Review(
                 id = 0,
@@ -78,18 +85,15 @@ class ReviewRepositoryIntTest {
             )
         )
 
-        // executa
         val deleted = repo.deleteReview(criada.id!!)
         assertTrue(deleted, "deleteReview deve retornar true quando existir a review")
 
-        // valida: não deve mais existir nenhuma review para esse livro
         val restantes = repo.getReviewsByLivroId(livroId)
         assertTrue(restantes.isEmpty(), "getReviewsByLivroId deve retornar lista vazia após o delete")
     }
 
     @Test
     fun `deleteReview retorna false se id nao existir`() {
-        // tenta deletar um ID que não existe
         val deleted = repo.deleteReview(-1)
         assertFalse(deleted, "deleteReview deve retornar false quando não existir o ID")
     }

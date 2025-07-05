@@ -8,7 +8,7 @@ const BookCard = ({ item, onSelectItem }) => {
 
   useEffect(() => {
     const getCover = async () => {
-      const url = await fetchBookCover(item.title);
+      const url = await fetchBookCover(item.titulo);
       setCoverUrl(url);
     };
     getCover();
@@ -18,8 +18,8 @@ const BookCard = ({ item, onSelectItem }) => {
     <li className="list-group-item" onClick={() => onSelectItem(item)}>
       <img src={coverUrl || placeholderUrl} alt={`${item.title} cover`} className="book-cover" />
       <div className="book-card-content">
-        <h3 className="book-title">{item.title}</h3>
-        <p className="book-author">{item.author}</p>
+        <h3 className="book-title">{item.titulo}</h3>
+        <p className="book-author">{item.autor}</p>
       </div>
     </li>
   );

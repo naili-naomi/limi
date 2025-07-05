@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 src/*.txt
 src/*.sh
+
+# Ignorar todos os arquivos .sh
+*.sh
+
+# Ignorar todos os arquivos .txt
+*.txt

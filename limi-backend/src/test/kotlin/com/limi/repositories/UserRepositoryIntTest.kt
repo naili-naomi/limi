@@ -2,14 +2,16 @@ package com.limi.repositories
 
 import com.limi.config.DatabaseFactory
 import com.limi.models.User
-import org.jetbrains.exposed.sql.Database
+import io.ktor.client.* 
+import io.ktor.client.engine.cio.* 
+import io.ktor.client.plugins.contentnegotiation.* 
+import io.ktor.serialization.kotlinx.json.json
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.*
-import org.junit.jupiter.api.Test
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRepositoryIntTest {
@@ -18,11 +20,17 @@ class UserRepositoryIntTest {
 
     @BeforeAll
     fun setup() {
-        // Conecta ao banco H2 em memória
-        Database.connect("jdbc:h2:mem:test-users;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
-        transaction { // ✅ Garante que tudo aconteça em uma transação única
-            DatabaseFactory.init()
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json()
+            }
         }
+        // Conecta ao banco H2 em memória
+        DatabaseFactory.init(
+            client = client,
+            url = "jdbc:h2:mem:test-users;DB_CLOSE_DELAY=-1", 
+            driver = "org.h2.Driver"
+        )
         repo = UserRepository()
     }
 

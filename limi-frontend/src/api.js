@@ -47,3 +47,19 @@ export async function addBook(bookData, token) {
 
   return await response.json();
 }
+
+export async function getLivros() {
+  const response = await fetch(`${API_BASE}/livros`);
+  if (!response.ok) {
+    throw new Error('Erro ao buscar livros');
+  }
+  return await response.json();
+}
+
+export async function getLivroById(id) {
+  const response = await fetch(`${API_BASE}/catalogo/${id}`);
+  if (!response.ok) {
+    throw new Error('Erro ao buscar detalhes do livro');
+  }
+  return await response.json();
+}

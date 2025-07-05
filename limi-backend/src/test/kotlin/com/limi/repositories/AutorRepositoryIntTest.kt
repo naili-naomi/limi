@@ -2,8 +2,10 @@ package com.limi.repositories
 
 import com.limi.config.DatabaseFactory
 import com.limi.models.Autor
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
+import io.ktor.client.* 
+import io.ktor.client.engine.cio.* 
+import io.ktor.client.plugins.contentnegotiation.* 
+import io.ktor.serialization.kotlinx.json.json
 import org.junit.jupiter.api.*
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -15,8 +17,16 @@ class AutorRepositoryIntTest {
 
     @BeforeAll
     fun setup() {
-        Database.connect("jdbc:h2:mem:test_autor;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
-        DatabaseFactory.init()
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        DatabaseFactory.init(
+            client = client,
+            url = "jdbc:h2:mem:test_autor;DB_CLOSE_DELAY=-1", 
+            driver = "org.h2.Driver"
+        )
     }
 
     @BeforeEach

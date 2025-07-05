@@ -121,7 +121,7 @@ function App() {
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/book/:title" element={<BookDetailsPage />} />
+          <Route path="/book/:titulo" element={<BookDetailsPage />} />
           <Route path="/add-book" element={<AddBookPage />} />
         </Routes>
       </main>

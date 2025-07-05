@@ -6,6 +6,7 @@ import com.limi.models.Users
 import com.limi.models.LivroGenero
 import com.limi.models.Livros
 import com.limi.models.Reviews
+import io.ktor.client.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -13,7 +14,7 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
-    fun init(url: String? = null, driver: String? = null) {
+    fun init(client: HttpClient, url: String? = null, driver: String? = null) {
         // Só conecta se vierem parâmetros explícitos
         if (url != null && driver != null) {
             Database.connect(url, driver)
@@ -26,7 +27,7 @@ object DatabaseFactory {
         }
 
         transaction {
-            DatabaseSeed.seedLivrosIniciais()
+            DatabaseSeed.seedLivrosIniciais(client)
         }
     }
 }

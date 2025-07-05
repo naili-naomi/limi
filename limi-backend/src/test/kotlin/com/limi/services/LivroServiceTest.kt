@@ -42,7 +42,7 @@ class LivroServiceTest {
     }
     @Test
     fun `adicionarLivro falha quando não existe externamente`() = runBlocking {
-        val livro = Livro(0, "Inexistente", "Autor X", 2020, "Sinopse", listOf("Ficção"))
+        val livro = Livro(0, "Inexistente", "Autor X", 2020, "Sinopse", null, listOf("Ficção"))
 
         coEvery { externalBookService.existsByTitle(any()) } returns false
 

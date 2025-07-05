@@ -1,15 +1,16 @@
 package com.limi.controllers
 
 import com.limi.config.DatabaseFactory
-import com.limi.controllers.userRoutes
 import com.limi.models.UserLoginRequest
-import com.limi.config.JwtConfig
 import com.limi.repositories.UserRepository
 import com.limi.services.UserService
+import io.ktor.client.* 
+import io.ktor.client.engine.cio.* 
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.plugins.contentnegotiation.*
@@ -17,22 +18,26 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
-import org.jetbrains.exposed.sql.Database
-import org.junit.jupiter.api.Test
-import kotlin.test.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.int
-
+import org.junit.jupiter.api.Test
+import kotlin.test.*
 
 class UserControllerIntegrationTest {
 
     private fun Application.testModule() {
-        Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
-        DatabaseFactory.init()
-
+        val client = HttpClient(CIO) {
+            install(ClientContentNegotiation) {
+                json()
+            }
+        }
+        DatabaseFactory.init(
+            client = client,
+            url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", 
+            driver = "org.h2.Driver"
+        )
 
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -55,14 +60,11 @@ class UserControllerIntegrationTest {
 
     @Test
     fun `cadastro válido retorna 201 e não expõe senha`() = testApplication {
-        // 1) DIZ que não é dev mode, pra NÃO procurar module()
         environment {
             config = MapApplicationConfig("ktor.development" to "false")
         }
-        // 2) monta SÓ o nosso testModule
         application { testModule() }
 
-        // 3) faz a requisição
         val resp = client.post("/usuarios/cadastro") {
             contentType(ContentType.Application.Json)
             setBody("""
@@ -111,7 +113,6 @@ class UserControllerIntegrationTest {
         }
         application { testModule() }
 
-        // Cadastro do usuário
         client.post("/usuarios/cadastro") {
             contentType(ContentType.Application.Json)
             setBody("""{
@@ -123,23 +124,15 @@ class UserControllerIntegrationTest {
         }""")
         }
 
-        // Login
         val loginResp = client.post("/usuarios/login") {
             contentType(ContentType.Application.Json)
             setBody("""{"email":"carlos@teste.com","senha":"senha123"}""")
         }
 
-        // Verificações
         assertEquals(HttpStatusCode.OK, loginResp.status)
 
         val body = loginResp.bodyAsText()
-        System.out.println("Resposta do login: $body")
-
-
-        // Verifica se a resposta contém "token"
         assertTrue(body.contains("token"), "Resposta não contém token")
-
-        // Verifica se a resposta contém "Carlos"
         assertTrue(body.contains("Carlos"), "Resposta não contém o nome do usuário")
     }
 
@@ -165,7 +158,6 @@ class UserControllerIntegrationTest {
         }
         application { testModule() }
 
-        // cria usuário
         val cadastro = client.post("/usuarios/cadastro") {
             contentType(ContentType.Application.Json)
             setBody("""
@@ -174,11 +166,9 @@ class UserControllerIntegrationTest {
         }
         assertEquals(HttpStatusCode.Created, cadastro.status)
 
-        // extrai id
         val cadastroJson = Json.parseToJsonElement(cadastro.bodyAsText()).jsonObject
         val userId = cadastroJson["id"]!!.jsonPrimitive.int
 
-        // faz PUT
         val respPut = client.put("/usuarios/users/$userId") {
             contentType(ContentType.Application.Json)
             setBody("""
@@ -187,7 +177,6 @@ class UserControllerIntegrationTest {
         }
         assertEquals(HttpStatusCode.OK, respPut.status)
 
-        // valida resposta
         val updatedJson = Json.parseToJsonElement(respPut.bodyAsText()).jsonObject
         assertEquals("José Atualizado", updatedJson["nome"]!!.jsonPrimitive.content)
         assertEquals("jose@ex.com", updatedJson["email"]!!.jsonPrimitive.content)
@@ -201,7 +190,6 @@ class UserControllerIntegrationTest {
         }
         application { testModule() }
 
-        // cria dois usuários
         val body1 = """{"id":0,"nome":"Ana","username":"ana01","email":"ana@ex.com","senha":"senha123"}"""
         val body2 = """{"id":0,"nome":"Bruno","username":"bruno01","email":"bruno@ex.com","senha":"senha123"}"""
         client.post("/usuarios/cadastro") {
@@ -216,7 +204,6 @@ class UserControllerIntegrationTest {
             .jsonPrimitive
             .int
 
-        // tenta atualizar segundo usuário com email do primeiro
         val respPut = client.put("/usuarios/users/$id2") {
             contentType(ContentType.Application.Json)
             setBody("""
