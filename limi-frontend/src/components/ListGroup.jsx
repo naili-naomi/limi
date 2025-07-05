@@ -7,7 +7,7 @@ function ListGroup({ items, heading }) {
   const navigate = useNavigate();
 
   const handleSelectItem = (item) => {
-    navigate(`/book/${item.title}`);
+    navigate(`/book/${item.id}`);
   };
 
   return (

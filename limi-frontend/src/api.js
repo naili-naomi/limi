@@ -58,8 +58,13 @@ export async function getLivros() {
 
 export async function getLivroById(id) {
   const response = await fetch(`${API_BASE}/catalogo/${id}`);
+  console.log('Response status:', response.status);
   if (!response.ok) {
-    throw new Error('Erro ao buscar detalhes do livro');
+    const errorText = await response.text();
+    console.error('Error response from backend:', errorText);
+    throw new Error('Erro ao buscar detalhes do livro: ' + errorText);
   }
-  return await response.json();
+  const data = await response.json();
+  console.log('Data received from backend:', data);
+  return data;
 }

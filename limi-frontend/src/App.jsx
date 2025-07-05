@@ -112,11 +112,11 @@ function App() {
       {/* ======= ROTAS ======= */}
       <main style={{ minHeight: '70vh', padding: '2rem 1rem' }}>
         <Routes>
-          <Route path="/" element={<Home items={items} />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/book/:titulo" element={<BookDetailsPage />} />
+          <Route path="/book/:id" element={<BookDetailsPage />} />
           <Route path="/add-book" element={<AddBookPage />} />
           <Route path="/profile" element={<UserProfile />} /> {/* Adicione a nova rota */}
         </Routes>

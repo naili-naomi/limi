@@ -27,6 +27,12 @@ fun Route.catalogoRoutes(catalogoService: CatalogoService) {
             call.respond(livros)
         }
 
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respondText("ID inválido", status = io.ktor.http.HttpStatusCode.BadRequest)
+            val livro = catalogoService.getLivroById(id) ?: return@get call.respondText("Livro não encontrado", status = io.ktor.http.HttpStatusCode.NotFound)
+            call.respond(livro)
+        }
+
         post("/livro") {
             val livro = call.receive<Livro>()
             catalogoService.adicionarLivro(livro)

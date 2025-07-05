@@ -21,11 +21,11 @@ function BookDetailsPage() {
         setLoading(true);
         const details = await getLivroById(id);
         setBookDetails({
-          titulo: livro.titulo,
-          autor: livro.autor,
-          anoPublicacao: livro.anoPublicacao,
-          sinopse: livro.sinopse,
-          urlImagem: livro.urlImagem
+          titulo: details.titulo,
+          autor: details.autor,
+          anoPublicacao: details.anoPublicacao,
+          sinopse: details.sinopse,
+          urlImagem: details.urlImagem
         });
       } catch (err) {
         setError('Erro ao buscar detalhes do livro');
