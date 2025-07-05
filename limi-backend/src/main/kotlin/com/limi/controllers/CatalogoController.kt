@@ -27,10 +27,27 @@ fun Route.catalogoRoutes(catalogoService: CatalogoService) {
             call.respond(livros)
         }
 
+        get("/genero/{genero}") {
+            val genero = call.parameters["genero"] ?: return@get call.respondText("Gênero inválido", status = io.ktor.http.HttpStatusCode.BadRequest)
+            val livros = catalogoService.pesquisarPorGenero(genero)
+            call.respond(livros)
+        }
+
+        get("/generos") {
+            val generos = catalogoService.listarTodosGeneros()
+            call.respond(generos)
+        }
+
         get("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respondText("ID inválido", status = io.ktor.http.HttpStatusCode.BadRequest)
             val livro = catalogoService.getLivroById(id) ?: return@get call.respondText("Livro não encontrado", status = io.ktor.http.HttpStatusCode.NotFound)
             call.respond(livro)
+        }
+
+        get("/search") {
+            val query = call.request.queryParameters["query"] ?: return@get call.respondText("Parâmetro de busca inválido", status = io.ktor.http.HttpStatusCode.BadRequest)
+            val livros = catalogoService.pesquisarLivros(query)
+            call.respond(livros)
         }
 
         post("/livro") {

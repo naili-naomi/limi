@@ -18,6 +18,23 @@ class CatalogoService(private val livroRepository: LivroRepository) {  // Recebe
         return livroRepository.getAllLivros()
             .filter { it.autor.contains(nomeAutor, ignoreCase = true) }
     }
+
+    fun pesquisarPorGenero(genero: String): List<Livro> {
+        return livroRepository.getLivrosByGenero(genero)
+    }
+
+    fun listarTodosGeneros(): List<String> {
+        return livroRepository.getAllGeneros()
+    }
+
+    fun pesquisarLivros(query: String): List<Livro> {
+        val livrosPorTitulo = livroRepository.getAllLivros()
+            .filter { it.titulo.contains(query, ignoreCase = true) }
+        val livrosPorAutor = livroRepository.getAllLivros()
+            .filter { it.autor.contains(query, ignoreCase = true) }
+        return (livrosPorTitulo + livrosPorAutor).distinctBy { it.id }
+    }
+
     fun listarTodosLivros(): List<Livro> {
         return livroRepository.getAllLivros()
     }

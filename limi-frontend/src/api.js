@@ -58,13 +58,32 @@ export async function getLivros() {
 
 export async function getLivroById(id) {
   const response = await fetch(`${API_BASE}/catalogo/${id}`);
-  console.log('Response status:', response.status);
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Error response from backend:', errorText);
-    throw new Error('Erro ao buscar detalhes do livro: ' + errorText);
+    throw new Error('Erro ao buscar detalhes do livro');
   }
-  const data = await response.json();
-  console.log('Data received from backend:', data);
-  return data;
+  return await response.json();
+}
+
+export async function searchLivros(query) {
+  const response = await fetch(`${API_BASE}/catalogo/search?query=${encodeURIComponent(query)}`);
+  if (!response.ok) {
+    throw new Error('Erro ao buscar livros');
+  }
+  return await response.json();
+}
+
+export async function getLivrosByGenero(genero) {
+  const response = await fetch(`${API_BASE}/catalogo/genero/${encodeURIComponent(genero)}`);
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar livros do gênero ${genero}`);
+  }
+  return await response.json();
+}
+
+export async function getAllGeneros() {
+  const response = await fetch(`${API_BASE}/catalogo/generos`);
+  if (!response.ok) {
+    throw new Error('Erro ao buscar gêneros');
+  }
+  return await response.json();
 }

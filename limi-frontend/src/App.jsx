@@ -15,6 +15,7 @@ import logo from './assets/logo_horizontal_transparente.png';
 function App() {
   const [logado, setLogado] = useState(false);
   const [nome, setNome] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +26,11 @@ function App() {
       setNome(nomeSalvo);
     }
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    navigate(`/?search=${searchTerm}`);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -69,13 +75,13 @@ function App() {
         </Link>
 
         {/* ======= BARRA DE PESQUISA ======= */}
-        <form className="search-form" onSubmit={e => { e.preventDefault(); /* Adicione lógica de busca aqui */ }}>
+        <form className="search-form" onSubmit={handleSearch}>
           <input
             type="text"
             className="search-input"
             placeholder="Pesquisar livros..."
-            // value={searchTerm}
-            // onChange={e => setSearchTerm(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button type="submit" className="search-btn">Buscar</button>
         </form>

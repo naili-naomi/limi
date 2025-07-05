@@ -17,6 +17,14 @@ class LivroRepository {
         LivroEntity.findById(id)?.toLivro()
     }
 
+    fun getLivrosByGenero(genero: String): List<Livro> = transaction {
+        GeneroEntity.find { Generos.nome eq genero }.firstOrNull()?.livros?.map { it.toLivro() } ?: emptyList()
+    }
+
+    fun getAllGeneros(): List<String> = transaction {
+        GeneroEntity.all().map { it.nome }
+    }
+
     fun addLivro(livro: Livro): Livro = transaction {
         // Passo 1: Encontrar ou criar o autor
         val autorEntity = AutorEntity.find { Autores.nome eq livro.autor }.firstOrNull()

@@ -13,6 +13,7 @@ object Generos : IntIdTable("generos") {
 class GeneroEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<GeneroEntity>(Generos)
     var nome by Generos.nome
+    val livros by LivroEntity via LivroGenero
 }
 
 // Tabela de junção para relacionamentos entre livro e genêro
