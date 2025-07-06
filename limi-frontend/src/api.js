@@ -87,3 +87,63 @@ export async function getAllGeneros() {
   }
   return await response.json();
 }
+
+export async function getReviewsByBookId(bookId) {
+  const response = await fetch(`${API_BASE}/api/livros/${bookId}/reviews`);
+  if (!response.ok) {
+    throw new Error('Erro ao buscar reviews');
+  }
+  return await response.json();
+}
+
+export async function addReview(bookId, reviewData, token) {
+  const response = await fetch(`${API_BASE}/api/livros/${bookId}/reviews`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(reviewData)
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao adicionar review');
+  }
+
+  return await response.json();
+}
+
+export async function updateReview(bookId, reviewId, reviewData, token) {
+  const response = await fetch(`${API_BASE}/api/livros/${bookId}/reviews/${reviewId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(reviewData)
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao atualizar review');
+  }
+
+  return await response.json();
+}
+
+export async function deleteReview(bookId, reviewId, token) {
+  const response = await fetch(`${API_BASE}/api/livros/${bookId}/reviews/${reviewId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao deletar review');
+  }
+
+  return response.status === 204; // No Content
+}

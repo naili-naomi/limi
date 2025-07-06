@@ -62,7 +62,7 @@ function BookDetailsPage() {
           <p className="book-details-synopsis">{bookDetails.sinopse}</p>
         </div>
       </div>
-      <ReviewSection bookTitle={bookDetails.titulo} isLoggedIn={isLoggedIn} />
+      <ReviewSection bookId={id} isLoggedIn={isLoggedIn} />
     </div>
   );
 }

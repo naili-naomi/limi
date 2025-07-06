@@ -2,30 +2,24 @@ package com.limi.services
 
 import com.limi.models.Review
 import com.limi.repositories.ReviewRepository
-import com.limi.validation.validateForCreation
+import com.limi.repositories.UserRepository
 
-
-class ReviewService(private val reviewRepository: ReviewRepository) {
-    fun adicionarReview(review: Review): Review {
-
-        review.validateForCreation()
-        return reviewRepository.addReview(review)
+class ReviewService(private val reviewRepository: ReviewRepository, private val userRepository: UserRepository) {
+    fun addReview(review: Review): Review {
+        val user = userRepository.getUserById(review.userId)
+        val addedReview = reviewRepository.addReview(review)
+        return addedReview.copy(username = user?.username)
     }
 
-    fun buscarReviewsPorLivro(livroId: Int): List<Review> {
-        return reviewRepository.getReviewsByLivroId(livroId)
+    fun getReviewsByBookId(bookId: Int): List<Review> {
+        return reviewRepository.getReviewsByBookId(bookId)
     }
 
-    fun listarReviews(livroId: Int): List<Review> {
-        return reviewRepository.getReviewsByLivroId(livroId) // Ajuste conforme necessidade
+    fun deleteReview(reviewId: Int): Boolean {
+        return reviewRepository.deleteReview(reviewId)
     }
 
-    fun atualizarReview(id: Int, novoComentario: String, novaNota: Int): Review? {
-        return reviewRepository.updateReview(id, novoComentario, novaNota)
+    fun updateReview(reviewId: Int, review: Review): Review? {
+        return reviewRepository.updateReview(reviewId, review)
     }
-
-    fun deletarReview(id: Int): Boolean {
-        return reviewRepository.deleteReview(id)
-    }
-
 }

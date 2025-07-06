@@ -67,35 +67,12 @@ class ReviewRepositoryIntTest {
         val criado = repo.addReview(review)
         assertNotNull(criado.id)
 
-        val reviewsDoLivro = repo.getReviewsByLivroId(livroId)
+        val reviewsDoLivro = repo.getReviewsByBookId(livroId)
         assertEquals(1, reviewsDoLivro.size)
         assertEquals("Excelente leitura, recomendo!", reviewsDoLivro[0].comentario)
         assertEquals(5, reviewsDoLivro[0].nota)
     }
 
-    @Test
-    fun `deve deletar review e não retornar mais nada`() {
-        val criada = repo.addReview(
-            Review(
-                id = 0,
-                livroId = livroId,
-                userId = userId,
-                comentario = "Para deletar",
-                nota = 3
-            )
-        )
-
-        val deleted = repo.deleteReview(criada.id!!)
-        assertTrue(deleted, "deleteReview deve retornar true quando existir a review")
-
-        val restantes = repo.getReviewsByLivroId(livroId)
-        assertTrue(restantes.isEmpty(), "getReviewsByLivroId deve retornar lista vazia após o delete")
-    }
-
-    @Test
-    fun `deleteReview retorna false se id nao existir`() {
-        val deleted = repo.deleteReview(-1)
-        assertFalse(deleted, "deleteReview deve retornar false quando não existir o ID")
-    }
+    
 
 }

@@ -37,5 +37,6 @@ data class Review(
     val livroId: Int,
     val userId: Int,
     val comentario: String,
-    val nota: Int
+    val nota: Int,
+    val username: String? = null
 )

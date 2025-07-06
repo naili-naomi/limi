@@ -14,7 +14,7 @@ import com.limi.repositories.LivroRepository
 import com.limi.repositories.ReviewRepository
 import com.limi.repositories.AutorRepository
 import com.limi.repositories.UserRepository
-import com.limi.controllers.* // Import corrigido
+import com.limi.controllers.*
 import com.limi.services.* // Import corrigido
 import com.limi.config.configureErrorHandling
 import com.limi.services.ExternalBookService
@@ -66,7 +66,9 @@ fun Application.module() {
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Options) // necessário para pré-flight requests
         allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.Authorization) //
     }
 
     configureSecurity()
@@ -81,7 +83,7 @@ fun Application.module() {
     // Serviços com injeção de dependência correta
     val catalogoService = CatalogoService(livroRepository)
     val livroService = LivroService(livroRepository, externalBookService)
-    val reviewService = ReviewService(reviewRepository)
+    val reviewService = ReviewService(reviewRepository, userRepository)
     val userService = UserService(userRepository)
     val autorService = AutorService(autorRepository)
 
@@ -89,12 +91,12 @@ fun Application.module() {
     routing {
         catalogoRoutes(catalogoService)
         livroRoutes(livroService)
-        reviewRoutes(reviewService)
+        reviewController(reviewService, userService)
         userRoutes(userService)
         autorRoutes(autorService)
 
         authenticate("auth-jwt") {
-            reviewRoutes(ReviewService(ReviewRepository()))
+            reviewController(ReviewService(ReviewRepository(), UserRepository()), UserService(UserRepository()))
             livroRoutes(LivroService(LivroRepository(), ExternalBookService(client)))
             // qualquer outra rota que deva exigir login
         }

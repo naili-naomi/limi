@@ -52,4 +52,11 @@ class UserService(private val userRepository: UserRepository) {
         return userRepository.deleteUser(id)
     }
 
+    fun findByUsername(username: String): User? {
+        return userRepository.findByUsername(username)
+    }
+
+    fun getUserById(id: Int): User? {
+        return userRepository.getUserById(id)
+    }
 }

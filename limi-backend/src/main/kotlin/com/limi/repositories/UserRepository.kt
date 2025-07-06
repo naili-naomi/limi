@@ -25,6 +25,10 @@ class UserRepository {
                 ?.toUser()
         }
 
+    fun findByUsername(username: String): User? = transaction {
+        UserEntity.find { Users.username eq username }.firstOrNull()?.toUser()
+    }
+
 
     fun getAllUsers(): List<User> = transaction {
             UserEntity.all().map {

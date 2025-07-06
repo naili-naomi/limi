@@ -12,13 +12,19 @@ object JwtConfig {
 
     private val algorithm = Algorithm.HMAC256(secret)
 
-    fun generateToken(userId: Int): String = JWT.create()
-        .withIssuer(issuer)
-        .withAudience(audience)
-        .withClaim("userId", userId)
-        .sign(algorithm)
+    fun generateToken(userId: Int): String {
+        println("Generating token for userId: $userId")
+        val token = JWT.create()
+            .withIssuer(issuer)
+            .withAudience(audience)
+            .withClaim("userId", userId)
+            .sign(algorithm)
+        println("Generated token: $token")
+        return token
+    }
 
     fun configureJwt(jwt: JWTAuthenticationProvider.Config) {
+        println("Configuring JWT: issuer=$issuer, audience=$audience")
         jwt.verifier(
             JWT.require(algorithm)
                 .withIssuer(issuer)
@@ -26,7 +32,9 @@ object JwtConfig {
                 .build()
         )
         jwt.validate { credential ->
-            if (credential.payload.getClaim("userId").asInt() != null) JWTPrincipal(credential.payload) else null
+            val userId = credential.payload.getClaim("userId").asInt()
+            println("Validating token for userId: $userId")
+            if (userId != null) JWTPrincipal(credential.payload) else null
         }
     }
 }
