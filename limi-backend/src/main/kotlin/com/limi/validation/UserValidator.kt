@@ -12,7 +12,6 @@ fun User.validateForCreation() {
             validate(User::nome).isNotBlank()
             validate(User::username).isNotBlank()
             validate(User::email).isNotBlank().isEmail()
-            validate(User::senha).hasSize(min = 6)
         }
     } catch (ex: ConstraintViolationException) {
         val erros = ex.constraintViolations.associate {

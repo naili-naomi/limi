@@ -9,7 +9,7 @@ import javax.mail.internet.MimeMessage
 class AuthService(private val userRepository: UserRepository) {
 
     fun forgotPassword(email: String): String {
-        val user = userRepository.findByEmail(email) ?: throw Exception("User not found")
+        val user = userRepository.findByEmail(email) ?: throw Exception("Usuário não encontrado")
 
         val token = generateResetToken()
         val expiryDate = System.currentTimeMillis() + 3600000 // 1 hour
@@ -18,15 +18,15 @@ class AuthService(private val userRepository: UserRepository) {
 
         sendPasswordResetEmail(user.email, token)
 
-        return "Password reset email sent"
+        return "E-mail de redefinição de senha enviado"
     }
 
     fun resetPassword(token: String, newPassword: String):String {
-        val user = userRepository.findByResetToken(token) ?: throw Exception("Invalid token")
+        val user = userRepository.findByResetToken(token) ?: throw Exception("Token inválido")
 
         if (user.resetTokenExpiry != null) {
             if (System.currentTimeMillis() > user.resetTokenExpiry) {
-                throw Exception("Token expired")
+                throw Exception("Token expirado")
             }
         }
 
@@ -62,8 +62,8 @@ class AuthService(private val userRepository: UserRepository) {
         try {
             val message = MimeMessage(session)
             message.addRecipient(Message.RecipientType.TO, InternetAddress(email))
-            message.subject = "Password Reset"
-            message.setText("To reset your password, click the following link: http://localhost:5173/reset-password?token=$token")
+            message.subject = "Redefinição de senha"
+            message.setText("Para redefinir sua senha, clique no link a seguir: http://localhost:5173/reset-password?token=$token")
             Transport.send(message)
         } catch (e: MessagingException) {
             throw RuntimeException(e)
