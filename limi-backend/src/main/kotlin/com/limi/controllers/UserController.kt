@@ -8,9 +8,9 @@ import com.limi.models.User
 import com.limi.services.UserService
 import io.ktor.http.HttpStatusCode // Adicione esta linha
 import com.limi.validation.validateForCreation
-import com.limi.models.UserLoginRequest
+import com.limi.DTO.UserLoginRequest
 import com.limi.exceptions.AuthenticationException
-import com.limi.models.UserResponse
+import com.limi.DTO.UserResponse
 
 
 fun Route.userRoutes(userService: UserService) {

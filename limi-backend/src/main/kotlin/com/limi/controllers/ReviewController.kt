@@ -10,8 +10,8 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import com.limi.models.ReviewCreateRequest
-import com.limi.models.ReviewUpdateRequest
+import com.limi.DTO.ReviewCreateRequest
+import com.limi.DTO.ReviewUpdateRequest
 
 fun Route.reviewController(reviewService: ReviewService, userService: UserService) {
     route("/api/livros/{livroId}/reviews") {

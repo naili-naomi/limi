@@ -7,7 +7,7 @@ import com.limi.exceptions.AuthenticationException
 import com.limi.exceptions.NotFoundException
 import com.limi.config.JwtConfig
 import org.mindrot.jbcrypt.BCrypt
-import com.limi.models.UserLoginRequest
+import com.limi.DTO.UserLoginRequest
 
 class UserService(private val userRepository: UserRepository) {
     fun adicionarUser(usuario: User): User {
