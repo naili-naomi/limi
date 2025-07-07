@@ -17,7 +17,7 @@
   padding: 10px 15px;
   cursor: pointer;
   border-bottom: 1px solid #eee;
-  color: #333;
+  color: #666; /* Cor mais clara para os títulos */
 }
 
 .search-result-item:last-child {
@@ -26,4 +26,9 @@
 
 .search-result-item:hover {
   background-color: #f0f0f0;
+}
+
+.add-book-item {
+  color: #a30045; /* Cor de destaque */
+  font-weight: bold;
 }

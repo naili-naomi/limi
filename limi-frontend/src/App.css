@@ -103,11 +103,17 @@ h1 {
 }
 
 .nav-header {
-  margin-left: auto;
-  margin-right: 1rem;
+  margin-left: auto; /* Mover para a direita */
   display: flex;
-  gap: 1rem;
   align-items: center;
+  gap: 1rem;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: 2rem; /* Espaço entre a busca e os controles */
 }
 
 .nav-link {
@@ -130,16 +136,23 @@ h3{
 
 .nav-bemvindo {
   color: #333;
+  font-weight: 500;
 }
 
 .nav-sair {
   background: none;
   border: none;
-  color: #5674fc;
+  color: #a30045; /* Cor alterada */
   cursor: pointer;
+  font-size: 1rem; /* Tamanho diminuído */
+  font-weight: 500;
+  padding: 0;
+}
+
+.nav-sair:hover {
+  text-decoration: underline;
 }
 
 .user-icon {
   font-size: 1.5rem;
-  margin-left: 1rem;
 }

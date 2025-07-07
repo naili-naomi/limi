@@ -52,6 +52,27 @@
   color: #a30045;
 }
 
+.review-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.review-actions button {
+  background-color: #a30045;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+}
+
+.review-actions button:hover {
+  background-color: #8a003a;
+}
+
 .review-form {
   display: flex;
   flex-direction: column;

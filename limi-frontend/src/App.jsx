@@ -143,9 +143,11 @@ function App() {
                   {book.titulo}
                 </div>
               ))}
-              <div key="add-book-static" className="search-result-item" onClick={() => handleBookClick('add-book-static')}>
-                Adicionar Livro
-              </div>
+              {searchTerm && (
+                <div key="add-book-static" className="search-result-item add-book-item" onClick={() => handleBookClick('add-book-static')}>
+                  Adicionar Livro
+                </div>
+              )}
             </div>
           )}
         </form>
@@ -163,18 +165,17 @@ function App() {
               </Link>
             </>
           ) : (
-            <>
-              <span className="nav-bemvindo">Bem-vindo, {nome}</span>
-              <Link to="/add-book" className="nav-link" style={{ color: '#a30045' }}>
-                Adicionar Livro
+            <div className="user-controls">
+              <Link to="/add-book" className="nav-link" title="Adicionar Livro" style={{ color: '#a30045', fontSize: '1.8rem', fontWeight: 'bold', textDecoration: 'none' }}>
+                +
               </Link>
-              <Link to="/profile" className="nav-link user-icon" title="Meu Perfil">
+              <Link to="/profile" className="nav-link user-icon" title="Meu Perfil" style={{ color: '#a30045' }}>
                 👤
               </Link>
               <button onClick={handleLogout} className="nav-sair">
                 Sair
               </button>
-            </>
+            </div>
           )}
         </nav>
       </header>

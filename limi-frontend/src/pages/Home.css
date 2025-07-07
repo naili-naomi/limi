@@ -15,7 +15,7 @@
 
 .genero-list h3 {
     margin-top: 0;
-    color: #333;
+    color: #a30045; /* Cor alterada */
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
     margin-bottom: 15px;
@@ -41,6 +41,10 @@
 .genero-list li.active {
     font-weight: bold;
     color: #a30045; /* Cor de destaque para o gênero ativo */
+}
+
+.book-list h1 {
+    color: #a30045; /* Cor alterada */
 }
 
 .book-list {
