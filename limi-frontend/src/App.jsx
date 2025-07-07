@@ -14,6 +14,7 @@ import UserProfile from './pages/UserProfile'; // Importe a nova página
 import logo from './assets/logo_horizontal_transparente.png';
 import './components/SearchDropdown.css'; // Importe o CSS do dropdown
 import { searchLivros } from './api'; // Importe a função de busca
+import userIcon from './assets/user-icon.png'; // Importe o ícone de usuário
 
 function App() {
   const [logado, setLogado] = useState(false);
@@ -171,7 +172,7 @@ function App() {
                 +
               </Link>
               <Link to="/profile" className="nav-link user-icon" title="Meu Perfil" style={{ color: '#a30045' }}>
-                👤
+                <img src={userIcon} alt="User Icon" className="user-icon-img" />
               </Link>
               <button onClick={handleLogout} className="nav-sair">
                 Sair
