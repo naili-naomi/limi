@@ -1,7 +1,7 @@
 package com.limi.controllers
 
 import com.limi.config.DatabaseFactory
-import com.limi.models.UserLoginRequest
+import com.limi.DTO.UserLoginRequest
 import com.limi.repositories.UserRepository
 import com.limi.services.UserService
 import io.ktor.client.* 

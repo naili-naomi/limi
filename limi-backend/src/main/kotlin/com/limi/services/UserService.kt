@@ -8,17 +8,25 @@ import com.limi.exceptions.NotFoundException
 import com.limi.config.JwtConfig
 import org.mindrot.jbcrypt.BCrypt
 import com.limi.DTO.UserLoginRequest
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 class UserService(private val userRepository: UserRepository) {
     fun adicionarUser(usuario: User): User {
-
-        userRepository.buscarPorEmail(usuario.email)?.let {
-            throw ValidationException("email", "Já existe um usuário com este email")
-        }
         val senhaHash = BCrypt.hashpw(usuario.senha, BCrypt.gensalt())
         val usuarioComHash = usuario.copy(senha = senhaHash)
 
-        return userRepository.addUser(usuarioComHash)
+        return try {
+            userRepository.addUser(usuarioComHash)
+        } catch (e: ExposedSQLException) {
+            // Check for unique constraint violation (example for SQLite)
+            if (e.message?.contains("UNIQUE constraint failed", ignoreCase = true) == true) {
+                throw ValidationException("email", "Já existe um usuário com este email")
+            } else {
+                throw e // Re-throw other SQL exceptions
+            }
+        } catch (e: Exception) {
+            throw e // Re-throw any other unexpected exceptions
+        }
     }
     fun login(loginRequest: UserLoginRequest): String {
         val usuario = userRepository.buscarPorEmail(loginRequest.email)
