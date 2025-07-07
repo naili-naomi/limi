@@ -1,26 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getLivroById } from '../api';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getLivroById, decodeJwtToken, deleteBook } from '../api';
 import ReviewSection from '../components/ReviewSection';
 import './BookDetailsPage.css';
 
 function BookDetailsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [bookDetails, setBookDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Check login status (e.g., from localStorage or context)
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
+
+    if (token) {
+      const decodedToken = decodeJwtToken(token);
+      console.log('Token decoded:', decodedToken);
+      if (decodedToken && decodedToken.email === 'adminlimi@gmail.com') {
+        setIsAdmin(true);
+        console.log('User is admin.');
+      } else {
+        setIsAdmin(false);
+        console.log('User is NOT admin. Email:', decodedToken?.email);
+      }
+    } else {
+      console.log('No token found. User is not logged in.');
+    }
 
     const getBookDetails = async () => {
       try {
         setLoading(true);
         const details = await getLivroById(id);
         setBookDetails({
+          id: details.id, // Adicionado o ID para uso na exclusão
           titulo: details.titulo,
           autor: details.autor,
           anoPublicacao: details.anoPublicacao,
@@ -38,6 +54,24 @@ function BookDetailsPage() {
       getBookDetails();
     }
   }, [id]);
+
+  const handleDelete = async () => {
+    if (window.confirm('Tem certeza que deseja deletar este livro?')) {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          await deleteBook(bookDetails.id, token);
+          alert('Livro deletado com sucesso!');
+          navigate('/'); // Redireciona para a página inicial
+        } else {
+          alert('Você precisa estar logado para deletar um livro.');
+        }
+      } catch (err) {
+        console.error('Erro ao deletar livro:', err);
+        alert(`Erro ao deletar livro: ${err.message}`);
+      }
+    }
+  };
 
   if (loading) {
     return <div className="book-details-loading">Loading book details...</div>;
@@ -60,6 +94,11 @@ function BookDetailsPage() {
           <h3 className="book-details-author">by {bookDetails.autor}</h3>
           <p className="book-details-info"><strong>Published:</strong> {bookDetails.anoPublicacao}</p>
           <p className="book-details-synopsis">{bookDetails.sinopse}</p>
+          {isAdmin && (
+            <button onClick={handleDelete} className="delete-book-btn">
+              Deletar Livro
+            </button>
+          )}
         </div>
       </div>
       <ReviewSection bookId={id} isLoggedIn={isLoggedIn} />

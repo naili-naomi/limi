@@ -28,7 +28,7 @@ class UserService(private val userRepository: UserRepository) {
             throw AuthenticationException("Email ou senha inválidos")
         }
 
-        return JwtConfig.generateToken(usuario.id)
+        return JwtConfig.generateToken(usuario.id, usuario.email)
     }
 
     fun buscarPorEmail(email: String): User? = userRepository.buscarPorEmail(email)

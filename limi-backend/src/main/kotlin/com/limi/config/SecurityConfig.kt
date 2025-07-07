@@ -12,12 +12,13 @@ object JwtConfig {
 
     private val algorithm = Algorithm.HMAC256(secret)
 
-    fun generateToken(userId: Int): String {
-        println("Generating token for userId: $userId")
+    fun generateToken(userId: Int, email: String): String {
+        println("Generating token for userId: $userId, email: $email")
         val token = JWT.create()
             .withIssuer(issuer)
             .withAudience(audience)
             .withClaim("userId", userId)
+            .withClaim("email", email) // Adiciona o email como claim
             .sign(algorithm)
         println("Generated token: $token")
         return token

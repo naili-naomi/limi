@@ -225,6 +225,15 @@ object DatabaseSeed {
                 "Nós" to listOf("Distopia", "Ficção Científica")
             )
 
+            val bookImageUrls = mapOf(
+                "Harry Potter e a Pedra Filosofal" to "http://books.google.com/books/content?id=wrOQLp_6p4MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                "O Pequeno Príncipe" to "http://books.google.com/books/content?id=fCg_AwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            )
+
+            val bookSynopses = mapOf(
+                "Harry Potter e a Pedra Filosofal" to "Harry Potter é um garoto órfão que vive infeliz com seus tios, os Dursleys. No seu décimo primeiro aniversário, ele descobre que é um bruxo e que está matriculado na Escola de Magia e Bruxaria de Hogwarts. Lá, ele faz novos amigos, aprende feitiços e descobre a verdade sobre a morte de seus pais e o Lorde das Trevas, Voldemort."
+            )
+
             livros.forEach { titulo ->
                 runBlocking {
                     val bookDetails = externalBookService.getBookDetailsByTitle(titulo)
@@ -239,8 +248,8 @@ object DatabaseSeed {
                             this.titulo = bookDetails.title ?: ""
                             this.autor = autorEntity
                             this.anoPublicacao = bookDetails.publishedDate?.substring(0, 4)?.toIntOrNull() ?: 0
-                            this.sinopse = bookDetails.description ?: "Sinopse não disponível"
-                            this.urlImagem = bookDetails.imageLinks?.thumbnail
+                            this.sinopse = bookSynopses[titulo] ?: bookDetails.description ?: "Sinopse não disponível"
+                            this.urlImagem = bookImageUrls[titulo] ?: bookDetails.imageLinks?.thumbnail
                         }
 
                         // Adiciona gêneros com base no mapeamento manual

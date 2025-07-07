@@ -148,6 +148,22 @@ export async function deleteReview(bookId, reviewId, token) {
   return response.status === 204; // No Content
 }
 
+export async function deleteBook(bookId, token) {
+  const response = await fetch(`${API_BASE}/livros/${bookId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao deletar livro');
+  }
+
+  return response.status === 204; // No Content
+}
+
 export function decodeJwtToken(token) {
   try {
     const base64Url = token.split('.')[1];
