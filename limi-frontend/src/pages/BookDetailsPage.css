@@ -1,83 +1,15 @@
-/* src/pages/BookDetailsPage.css */
-.book-details-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 80vh;
-  padding: 1rem; /* Reduced padding */
-  background-color: #f5f6fa;
-}
-
-.book-details-card {
-  display: flex;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  width: 100%; /* Occupy full width */
-  margin-bottom: 1rem; /* Add some space below the card */
-}
-
-.book-details-cover {
-  width: 300px;
-  height: auto;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.book-details-content {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.book-details-title {
-  font-size: 2rem;
-  color: #a30045;
-  margin-bottom: 0.5rem;
-}
-
-.book-details-author {
-  font-size: 1.2rem;
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-
-.book-details-info {
-  font-size: 1rem;
-  color: #555;
-  margin-bottom: 0.5rem;
-}
-
-.book-details-synopsis {
-  font-size: 0.95rem;
-  color: #444;
-  line-height: 1.6;
-  margin-top: 1rem;
-}
-
-.book-details-loading,
-.book-details-error,
-.book-details-not-found {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #777;
-  padding: 2rem;
-}
-
-.delete-book-btn {
-  background-color: #dc3545; /* Vermelho */
+.favorite-book-btn {
+  background-color: #28a745;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
+  font-size: 1em;
+  margin-top: 15px;
   transition: background-color 0.3s ease;
 }
 
-.delete-book-btn:hover {
-  background-color: #c82333;
+.favorite-book-btn:hover {
+  background-color: #218838;
 }

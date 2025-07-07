@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getLivroById, decodeJwtToken, deleteBook } from '../api';
+import { getLivroById, decodeJwtToken, deleteBook, addFavorite, removeFavorite, isFavorite } from '../api';
 import ReviewSection from '../components/ReviewSection';
 import './BookDetailsPage.css';
 
@@ -10,8 +10,9 @@ function BookDetailsPage() {
   const [bookDetails, setBookDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isBookFavorite, setIsBookFavorite] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -36,13 +37,19 @@ function BookDetailsPage() {
         setLoading(true);
         const details = await getLivroById(id);
         setBookDetails({
-          id: details.id, // Adicionado o ID para uso na exclusão
+          id: details.id,
           titulo: details.titulo,
           autor: details.autor,
           anoPublicacao: details.anoPublicacao,
           sinopse: details.sinopse,
           urlImagem: details.urlImagem
         });
+
+        if (token) {
+          const favoriteStatus = await isFavorite(details.id, token);
+          setIsBookFavorite(favoriteStatus);
+        }
+
       } catch (err) {
         setError('Erro ao buscar detalhes do livro');
       } finally {
@@ -62,7 +69,7 @@ function BookDetailsPage() {
         if (token) {
           await deleteBook(bookDetails.id, token);
           alert('Livro deletado com sucesso!');
-          navigate('/'); // Redireciona para a página inicial
+          navigate('/');
         } else {
           alert('Você precisa estar logado para deletar um livro.');
         }
@@ -73,27 +80,54 @@ function BookDetailsPage() {
     }
   };
 
+  const handleFavoriteToggle = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Você precisa estar logado para adicionar/remover favoritos.');
+      return;
+    }
+
+    try {
+      if (isBookFavorite) {
+        await removeFavorite(bookDetails.id, token);
+        alert('Livro removido dos favoritos!');
+      } else {
+        await addFavorite(bookDetails.id, token);
+        alert('Livro adicionado aos favoritos!');
+      }
+      setIsBookFavorite(!isBookFavorite);
+    } catch (err) {
+      console.error('Erro ao atualizar favoritos:', err);
+      alert(`Erro ao atualizar favoritos: ${err.message}`);
+    }
+  };
+
   if (loading) {
-    return <div className="book-details-loading">Loading book details...</div>;
+    return <div className="book-details-loading">Carregando detalhes do livro...</div>;
   }
 
   if (error) {
-    return <div className="book-details-error">Error: {error}</div>;
+    return <div className="book-details-error">Erro: {error}</div>;
   }
 
   if (!bookDetails) {
-    return <div className="book-details-not-found">No book details available.</div>;
+    return <div className="book-details-not-found">Nenhum detalhe do livro disponível.</div>;
   }
 
   return (
     <div className="book-details-container">
       <div className="book-details-card">
-        <img src={bookDetails.urlImagem || 'https://via.placeholder.com/150x225.png?text=No+Cover'} alt={`${bookDetails.titulo} cover`} className="book-details-cover" />
+        <img src={bookDetails.urlImagem || 'https://via.placeholder.com/150x225.png?text=Sem+Capa'} alt={`${bookDetails.titulo} cover`} className="book-details-cover" />
         <div className="book-details-content">
           <h2 className="book-details-title">{bookDetails.titulo}</h2>
-          <h3 className="book-details-author">by {bookDetails.autor}</h3>
-          <p className="book-details-info"><strong>Published:</strong> {bookDetails.anoPublicacao}</p>
+          <h3 className="book-details-author">por {bookDetails.autor}</h3>
+          <p className="book-details-info"><strong>Publicado em:</strong> {bookDetails.anoPublicacao}</p>
           <p className="book-details-synopsis">{bookDetails.sinopse}</p>
+          {isLoggedIn && (
+            <button onClick={handleFavoriteToggle} className="favorite-book-btn">
+              {isBookFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+            </button>
+          )}
           {isAdmin && (
             <button onClick={handleDelete} className="delete-book-btn">
               Deletar Livro

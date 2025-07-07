@@ -22,7 +22,7 @@ object DatabaseFactory {
         transaction {
             addLogger(StdOutSqlLogger)
             SchemaUtils.create(Autores, Users, Generos, Livros,
-                LivroGenero, Reviews)
+                LivroGenero, Reviews, UserFavorites, ReviewLikes)
             commit()
         }
 

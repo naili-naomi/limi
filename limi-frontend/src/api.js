@@ -207,3 +207,75 @@ export async function resetPassword(token, newPassword) {
 
   return await response.text();
 }
+
+export const addLike = async (reviewId, token) => {
+  const response = await fetch(`${API_BASE}/reviews/${reviewId}/like`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to like review');
+  }
+};
+
+export const removeLike = async (reviewId, token) => {
+  const response = await fetch(`${API_BASE}/reviews/${reviewId}/like`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to unlike review');
+  }
+};
+
+export const getFavorites = async (token) => {
+  const response = await fetch(`${API_BASE}/favorites`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch favorites');
+  }
+  return await response.json();
+};
+
+export const addFavorite = async (livroId, token) => {
+  const response = await fetch(`${API_BASE}/favorites/${livroId}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to add favorite');
+  }
+};
+
+export const removeFavorite = async (livroId, token) => {
+  const response = await await fetch(`${API_BASE}/favorites/${livroId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to remove favorite');
+  }
+};
+
+export const isFavorite = async (livroId, token) => {
+  const response = await fetch(`${API_BASE}/favorites/isFavorite/${livroId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to check favorite status');
+  }
+  return await response.json();
+};

@@ -28,8 +28,8 @@ function ReviewSection({ bookId, isLoggedIn }) {
         const fetchedReviews = await getReviewsByBookId(bookId);
         setReviews(fetchedReviews);
       } catch (error) {
-        console.error('Error fetching reviews:', error);
-        setToast({ message: 'Error fetching reviews', type: 'error' });
+        console.error('Erro ao buscar avaliações:', error);
+        setToast({ message: 'Erro ao buscar avaliações', type: 'error' });
       }
     };
 
@@ -50,13 +50,13 @@ function ReviewSection({ bookId, isLoggedIn }) {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (newReviewText.trim() === '' || newReviewRating === 0) {
-      alert('Please provide a rating and a comment.');
+      alert('Por favor, forneça uma nota e um comentário.');
       return;
     }
 
     const token = localStorage.getItem('token');
     if (!token) {
-      setToast({ message: 'Please log in to submit a review.', type: 'error' });
+      setToast({ message: 'Por favor, faça login para enviar uma avaliação.', type: 'error' });
       return;
     }
 
@@ -84,8 +84,8 @@ function ReviewSection({ bookId, isLoggedIn }) {
     setNewReviewRating(0);
     setToast({ message: 'Avaliação enviada com sucesso!', type: 'success' });
   } catch (error) {
-    console.error('Error submitting review:', error);
-    setToast({ message: 'Error submitting review', type: 'error' });
+    console.error('Erro ao enviar avaliação:', error);
+    setToast({ message: 'Erro ao enviar avaliação', type: 'error' });
   }
   };
 
@@ -96,19 +96,19 @@ function ReviewSection({ bookId, isLoggedIn }) {
   };
 
   const handleDeleteClick = async (reviewId) => {
-    if (window.confirm('Are you sure you want to delete this review?')) {
+    if (window.confirm('Tem certeza que deseja deletar esta avaliação?')) {
       const token = localStorage.getItem('token');
       if (!token) {
-        setToast({ message: 'Please log in to delete a review.', type: 'error' });
+        setToast({ message: 'Por favor, faça login para deletar uma avaliação.', type: 'error' });
         return;
       }
       try {
         await deleteReview(bookId, reviewId, token);
         setReviews(reviews.filter((review) => review.id !== reviewId));
-        setToast({ message: 'Review deleted successfully!', type: 'success' });
+        setToast({ message: 'Avaliação deletada com sucesso!', type: 'success' });
       } catch (error) {
-        console.error('Error deleting review:', error);
-        setToast({ message: 'Error deleting review', type: 'error' });
+        console.error('Erro ao deletar avaliação:', error);
+        setToast({ message: 'Erro ao deletar avaliação', type: 'error' });
       }
     }
   };
@@ -116,13 +116,13 @@ function ReviewSection({ bookId, isLoggedIn }) {
   const handleUpdateReview = async (e) => {
     e.preventDefault();
     if (editingReviewText.trim() === '' || editingReviewRating === 0) {
-      alert('Please provide a rating and a comment.');
+      alert('Por favor, forneça uma nota e um comentário.');
       return;
     }
 
     const token = localStorage.getItem('token');
     if (!token) {
-      setToast({ message: 'Please log in to update a review.', type: 'error' });
+      setToast({ message: 'Por favor, faça login para atualizar uma avaliação.', type: 'error' });
       return;
     }
 
@@ -145,10 +145,39 @@ function ReviewSection({ bookId, isLoggedIn }) {
       setEditingReviewId(null);
       setEditingReviewText('');
       setEditingReviewRating(0);
-      setToast({ message: 'Review updated successfully!', type: 'success' });
+      setToast({ message: 'Avaliação atualizada com sucesso!', type: 'success' });
     } catch (error) {
-      console.error('Error updating review:', error);
-      setToast({ message: 'Error updating review', type: 'error' });
+      console.error('Erro ao atualizar avaliação:', error);
+      setToast({ message: 'Erro ao atualizar avaliação', type: 'error' });
+    }
+  };
+
+  const handleLikeClick = async (reviewId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setToast({ message: 'Por favor, faça login para curtir uma avaliação.', type: 'error' });
+      return;
+    }
+
+    const isLiked = likedReviews.has(reviewId);
+
+    try {
+      if (isLiked) {
+        // Unlike
+        await removeLike(reviewId, token);
+        setLikedReviews(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(reviewId);
+          return newSet;
+        });
+      } else {
+        // Like
+        await addLike(reviewId, token);
+        setLikedReviews(prev => new Set(prev).add(reviewId));
+      }
+    } catch (error) {
+      console.error('Erro ao curtir avaliação:', error);
+      setToast({ message: 'Erro ao curtir avaliação', type: 'error' });
     }
   };
 
@@ -165,9 +194,9 @@ function ReviewSection({ bookId, isLoggedIn }) {
   return (
     <div className="review-section-container">
       <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: '', type: '' })} />
-      <h3>Reviews</h3>
+      <h3>Avaliações</h3>
       <div className="average-rating">
-        Average Rating: {averageRating.toFixed(1)} / 5 {renderStars(averageRating)}
+        Nota Média: {averageRating.toFixed(1)} / 5 {renderStars(averageRating)}
       </div>
       <div className="reviews-list">
         {reviews.map((review) => (
@@ -190,19 +219,22 @@ function ReviewSection({ bookId, isLoggedIn }) {
                   onChange={(e) => setEditingReviewText(e.target.value)}
                   rows="3"
                 ></textarea>
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingReviewId(null)}>Cancel</button>
+                <button type="submit">Salvar</button>
+                <button type="button" onClick={() => setEditingReviewId(null)}>Cancelar</button>
               </form>
             ) : (
               <>
                 <p><strong>{review.username}</strong> {renderStars(review.nota)}</p>
                 <p>{review.comentario}</p>
-                {isLoggedIn && currentUserId === review.userId && ( // Only show edit/delete if logged in AND current user is the author
-                  <div className="review-actions">
-                    <button onClick={() => handleEditClick(review)}>Edit</button>
-                    <button onClick={() => handleDeleteClick(review.id)}>Delete</button>
-                  </div>
-                )}
+                <div class="review-actions">
+                  <button onClick={() => handleLikeClick(review.id)}>Curtir</button>
+                  {isLoggedIn && currentUserId === review.userId && ( // Only show edit/delete if logged in AND current user is the author
+                    <>
+                      <button onClick={() => handleEditClick(review)}>Editar</button>
+                      <button onClick={() => handleDeleteClick(review.id)}>Deletar</button>
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -211,7 +243,7 @@ function ReviewSection({ bookId, isLoggedIn }) {
 
       {isLoggedIn ? (
         <form onSubmit={handleReviewSubmit} className="review-form">
-          <h4>Add Your Review</h4>
+          <h4>Adicione Sua Avaliação</h4>
           <div className="rating-input">
             {[1, 2, 3, 4, 5].map((star) => (
               <span
@@ -224,15 +256,15 @@ function ReviewSection({ bookId, isLoggedIn }) {
             ))}
           </div>
           <textarea
-            placeholder="Write your review..."
+            placeholder="Escreva sua avaliação..."
             value={newReviewText}
             onChange={(e) => setNewReviewText(e.target.value)}
             rows="4"
           ></textarea>
-          <button type="submit">Submit Review</button>
+          <button type="submit">Enviar Avaliação</button>
         </form>
       ) : (
-        <p className="login-prompt">Please log in to add a review.</p>
+        <p className="login-prompt">Por favor, faça login para adicionar uma avaliação.</p>
       )}
     </div>
   );

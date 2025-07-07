@@ -93,6 +93,11 @@ fun Application.module() {
     val userService = UserService(userRepository)
     val autorService = AutorService(autorRepository)
     val authService = AuthService(userRepository)
+    val favoriteRepository = FavoriteRepository()
+    val favoriteRepository = FavoriteRepository()
+    val favoriteService = FavoriteService(favoriteRepository)
+    val likeRepository = LikeRepository()
+    val likeService = LikeService(likeRepository)
 
     // Rotas
     routing {
@@ -102,6 +107,8 @@ fun Application.module() {
         userRoutes(userService)
         autorRoutes(autorService)
         authRoutes(authService)
+        favoriteRoutes(favoriteService)
+        likeRoutes(likeService)
 
         authenticate("auth-jwt") {
             reviewController(ReviewService(ReviewRepository(), UserRepository()), UserService(UserRepository()))
