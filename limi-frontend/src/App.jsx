@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import ListGroup from './components/ListGroup';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import BookDetailsPage from './pages/BookDetailsPage';
 import AddBookPage from './pages/AddBookPage';
 import UserProfile from './pages/UserProfile'; // Importe a nova página
@@ -187,6 +188,7 @@ function App() {
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/signup" element={<SignUp onSignUp={handleSignUp} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/book/:id" element={<BookDetailsPage />} />
           <Route path="/add-book" element={<AddBookPage />} />
           <Route path="/profile" element={<UserProfile />} /> {/* Adicione a nova rota */}

@@ -177,3 +177,33 @@ export function decodeJwtToken(token) {
     return null;
   }
 }
+
+export async function forgotPassword(email) {
+  const response = await fetch(`${API_BASE}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' }, // Mudar para text/plain
+    body: email // Enviar o e-mail como texto puro
+  });
+
+  if (!response.ok) {
+    const data = await response.text().catch(() => 'Erro desconhecido');
+    throw new Error(data || 'Erro ao solicitar redefinição de senha');
+  }
+
+  return await response.text();
+}
+
+export async function resetPassword(token, newPassword) {
+  const response = await fetch(`${API_BASE}/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword })
+  });
+
+  if (!response.ok) {
+    const data = await response.text().catch(() => 'Erro desconhecido');
+    throw new Error(data || 'Erro ao redefinir a senha');
+  }
+
+  return await response.text();
+}

@@ -1,0 +1,86 @@
+/* src/pages/AddBookPage.css */
+.add-book-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #EFE9D4;
+}
+
+.add-book-form {
+  background: #FFFFFF;
+  padding: 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.add-book-form h2 {
+  color: #a30045;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.btn-add-book {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #a30045;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add-book:hover {
+  background-color: #8a003a;
+}
+
+.error-message {
+  color: #c00;
+  background: #fee;
+  border: 1px solid #fcc;
+  padding: 0.6rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.success-message {
+  color: #2c662d;
+  background: #eef8ee;
+  border: 1px solid #b9e2b3;
+  padding: 0.6rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+}

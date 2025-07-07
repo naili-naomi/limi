@@ -18,6 +18,8 @@ import com.limi.controllers.*
 import com.limi.services.* // Import corrigido
 import com.limi.config.configureErrorHandling
 import com.limi.services.ExternalBookService
+import com.limi.routes.authRoutes
+import com.limi.services.AuthService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
@@ -57,7 +59,7 @@ fun Application.module() {
     // Inicialização do banco
     DatabaseFactory.init(
         client = client,
-        url = "jdbc:sqlite:/home/naomi/limi/catalogo.db",
+        url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db",
         driver = "org.sqlite.JDBC"
     )
 
@@ -90,6 +92,7 @@ fun Application.module() {
     val reviewService = ReviewService(reviewRepository, userRepository)
     val userService = UserService(userRepository)
     val autorService = AutorService(autorRepository)
+    val authService = AuthService(userRepository)
 
     // Rotas
     routing {
@@ -98,6 +101,7 @@ fun Application.module() {
         reviewController(reviewService, userService)
         userRoutes(userService)
         autorRoutes(autorService)
+        authRoutes(authService)
 
         authenticate("auth-jwt") {
             reviewController(ReviewService(ReviewRepository(), UserRepository()), UserService(UserRepository()))

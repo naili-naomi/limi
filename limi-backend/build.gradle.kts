@@ -47,6 +47,8 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:${ktorVersion}")
     implementation("com.auth0:java-jwt:${ktorVersion}")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("javax.mail:mail:1.4.7")
+    implementation("javax.mail:mail:1.4.7")
 
 
 
@@ -54,6 +56,11 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+    implementation("com.sun.mail:jakarta.mail:2.0.1")
+    implementation("javax.mail:mail:1.4.7")
+
+
 }
 
 tasks.test {

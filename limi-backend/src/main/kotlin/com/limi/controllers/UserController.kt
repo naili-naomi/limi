@@ -11,6 +11,7 @@ import com.limi.validation.validateForCreation
 import com.limi.DTO.UserLoginRequest
 import com.limi.exceptions.AuthenticationException
 import com.limi.DTO.UserResponse
+import com.limi.DTO.ErrorResponse // Adicione esta linha
 
 
 fun Route.userRoutes(userService: UserService) {
@@ -47,10 +48,10 @@ fun Route.userRoutes(userService: UserService) {
 
                 call.respond(HttpStatusCode.OK, mapOf("token" to token, "nome" to usuario.nome))
             } catch (e: AuthenticationException) {
-                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to e.message))
+                call.respond(HttpStatusCode.Unauthorized, ErrorResponse(e.message ?: "Email ou senha inválidos"))
             } catch (e: Exception) {
                 e.printStackTrace() // <- MOSTRA O ERRO REAL NO TESTE
-                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Erro interno"))
+                call.respond(HttpStatusCode.InternalServerError, ErrorResponse(e.message ?: "Erro interno do servidor"))
             }
         }
 

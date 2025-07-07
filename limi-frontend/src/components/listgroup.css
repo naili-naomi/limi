@@ -1,0 +1,68 @@
+/* src/components/ListGroup.css */
+.list-group-container {
+  padding: 1rem;
+  background-color: #EFE9D4;
+}
+
+.list-group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-group-item {
+  background: #dfd8be; /* Fundo do card */
+  border: 1px solid #dddddd; /* Borda do card */
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.list-group-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  background-color: #9a0b46;
+}
+
+.list-group-item:hover .book-title,
+.list-group-item:hover .book-author {
+  color: #ffffff;
+}
+
+.list-group-item .book-cover {
+  width: 100%;
+  height: 225px;
+  object-fit: cover;
+}
+
+.list-group-item .book-cover-placeholder {
+  width: 100%;
+  height: 225px;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+.list-group-item .book-card-content {
+  padding: 0.75rem;
+}
+
+.list-group-item .book-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222; /* Cor do título do livro */
+  margin: 0 0 0.25rem 0;
+}
+
+.list-group-item .book-author {
+  font-size: 0.875rem;
+  color: #666; /* Cor do autor */
+  margin: 0;
+}

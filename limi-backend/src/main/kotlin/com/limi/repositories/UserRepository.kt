@@ -4,6 +4,7 @@ import com.limi.models.User
 import com.limi.models.UserEntity
 import com.limi.models.Users
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.mindrot.jbcrypt.BCrypt
 
 class UserRepository {
     fun addUser(user: User): User =
@@ -56,5 +57,26 @@ class UserRepository {
             it.delete()
             true
         } ?: false
+    }
+
+    fun findByEmail(email: String): User? = transaction {
+        UserEntity.find { Users.email eq email }.firstOrNull()?.toUser()
+    }
+
+    fun findByResetToken(token: String): User? = transaction {
+        UserEntity.find { Users.resetToken eq token }.firstOrNull()?.toUser()
+    }
+
+    fun updateResetToken(userId: Int, token: String?, expiry: Long?) = transaction {
+        UserEntity.findById(userId)?.apply {
+            resetToken = token
+            resetTokenExpiry = expiry
+        }
+    }
+
+    fun updatePassword(userId: Int, newPassword: String): Boolean = transaction {
+        UserEntity.findById(userId)?.apply {
+            senha = BCrypt.hashpw(newPassword, BCrypt.gensalt())
+        } != null
     }
 }

@@ -12,7 +12,9 @@ data class User(
     val nome: String,
     val username: String,
     val email: String,
-    val senha: String
+    val senha: String,
+    val resetToken: String? = null,
+    val resetTokenExpiry: Long? = null
 ) {
     fun verifLogin(senha: String, email: String): Boolean {
         return this.senha == senha && this.email == email
@@ -23,6 +25,8 @@ object Users : IntIdTable() {
     val username = varchar("username", 255).uniqueIndex()
     val email = varchar("email", 255).uniqueIndex()
     val senha = varchar("senha", 255)
+    val resetToken = varchar("reset_token", 255).nullable()
+    val resetTokenExpiry = long("reset_token_expiry").nullable()
 }
 
 // Entidade que representa a tabela no Kotlin
@@ -33,13 +37,17 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     var username by Users.username
     var email by Users.email
     var senha by Users.senha
+    var resetToken by Users.resetToken
+    var resetTokenExpiry by Users.resetTokenExpiry
 
     fun toUser() = User(
         id = id.value,
         nome = nome,
         username = username,
         email = email,
-        senha = senha
+        senha = senha,
+        resetToken = resetToken,
+        resetTokenExpiry = resetTokenExpiry
     )
 }
 

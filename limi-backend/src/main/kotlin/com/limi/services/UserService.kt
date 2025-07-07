@@ -29,14 +29,23 @@ class UserService(private val userRepository: UserRepository) {
         }
     }
     fun login(loginRequest: UserLoginRequest): String {
+        println("DEBUG: Tentativa de login para o email: ${loginRequest.email}")
         val usuario = userRepository.buscarPorEmail(loginRequest.email)
-            ?: throw AuthenticationException("Email ou senha inválidos")
+            ?: run {
+                println("DEBUG: Usuário não encontrado para o email: ${loginRequest.email}")
+                throw AuthenticationException("Email ou senha inválidos")
+            }
 
+        println("DEBUG: Usuário encontrado: ${usuario.email}")
         if (!BCrypt.checkpw(loginRequest.senha, usuario.senha)) {
+            println("DEBUG: Senha inválida para o email: ${loginRequest.email}")
             throw AuthenticationException("Email ou senha inválidos")
         }
 
-        return JwtConfig.generateToken(usuario.id, usuario.email)
+        println("DEBUG: Senha verificada com sucesso para o email: ${loginRequest.email}")
+        val token = JwtConfig.generateToken(usuario.id, usuario.email)
+        println("DEBUG: Token JWT gerado para o email: ${loginRequest.email}")
+        return token
     }
 
     fun buscarPorEmail(email: String): User? = userRepository.buscarPorEmail(email)
