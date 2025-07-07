@@ -57,6 +57,7 @@ h1 {
 }
 
 .search-form {
+  position: relative; /* Adicionado para posicionar o dropdown */
   display: flex;
   align-items: center;
   margin-left: 2rem;

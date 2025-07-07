@@ -11,12 +11,48 @@ import BookDetailsPage from './pages/BookDetailsPage';
 import AddBookPage from './pages/AddBookPage';
 import UserProfile from './pages/UserProfile'; // Importe a nova página
 import logo from './assets/logo_horizontal_transparente.png';
+import './components/SearchDropdown.css'; // Importe o CSS do dropdown
+import { searchLivros } from './api'; // Importe a função de busca
 
 function App() {
   const [logado, setLogado] = useState(false);
   const [nome, setNome] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
   const navigate = useNavigate();
+
+  // Debounce function
+  const debounce = (func, delay) => {
+    let timeout;
+    return function(...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+  };
+
+  const fetchSearchResults = async (query) => {
+    console.log('fetchSearchResults called with query:', query);
+    if (query.length > 2) { // Only search if query is at least 3 characters long
+      try {
+        const results = await searchLivros(query);
+        console.log('Search results:', results);
+        setSearchResults(results);
+        setShowResults(true);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    } else {
+      console.log('Query too short, not searching.');
+      setSearchResults([]);
+      setShowResults(false);
+    }
+  };
+
+  const debouncedFetchSearchResults = debounce(fetchSearchResults, 300);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -29,6 +65,7 @@ function App() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setShowResults(false); // Hide results when form is submitted
     navigate(`/?search=${searchTerm}`);
   };
 
@@ -62,6 +99,11 @@ function App() {
     navigate('/'); // redireciona pra home ou onde quiser
   };
 
+  const handleBookClick = (bookId) => {
+    setShowResults(false); // Hide results when a book is clicked
+    navigate(`/book/${bookId}`);
+  };
+
   return (
     <div className="app-container">
       {/* ======= HEADER ======= */}
@@ -81,9 +123,24 @@ function App() {
             className="search-input"
             placeholder="Pesquisar livros..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              debouncedFetchSearchResults(e.target.value);
+            }}
+            onFocus={() => searchTerm.length > 2 && setShowResults(true)}
+            onBlur={() => setTimeout(() => setShowResults(false), 100)} // Delay to allow click on results
           />
           <button type="submit" className="search-btn">Buscar</button>
+          {console.log('showResults:', showResults, 'searchResults.length:', searchResults.length)}
+          {showResults && searchResults.length > 0 && (
+            <div className="search-results-dropdown">
+              {searchResults.map((book) => (
+                <div key={book.id} className="search-result-item" onClick={() => handleBookClick(book.id)}>
+                  {book.titulo}
+                </div>
+              ))}
+            </div>
+          )}
         </form>
 
         {/* ======= NAVEGAÇÃO DINÂMICA ======= */}
