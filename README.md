@@ -35,6 +35,54 @@ O sistema é dividido em duas experiências principais:
 - **Banco de Dados:** SQLite
 - **Front-end:** HTML, CSS, JavaScript (React + Vite)
   
+## Como Rodar o Projeto
+
+Para executar a aplicação completa, você precisará iniciar o back-end e o front-end em terminais separados.
+
+### 1. Rodando o Back-end (Kotlin + Ktor)
+
+O back-end é responsável por servir a API e se conectar ao banco de dados.
+
+1.  **Navegue até a pasta do back-end:**
+    ```bash
+    cd limi-backend
+    ```
+
+2.  **Execute o servidor:**
+    Utilize o Gradle Wrapper para iniciar a aplicação.
+    - No Linux ou macOS:
+      ```bash
+      ./gradlew run
+      ```
+    - No Windows:
+      ```bash
+      .\gradlew.bat run
+      ```
+
+O servidor estará rodando em `http://localhost:8080`.
+
+### 2. Rodando o Front-end (React + Vite)
+
+O front-end é a interface com a qual o usuário interage.
+
+1.  **Navegue até a pasta do front-end em outro terminal:**
+    ```bash
+    cd limi-frontend
+    ```
+
+2.  **Instale as dependências:**
+    Se for a primeira vez, instale os pacotes necessários.
+    ```bash
+    npm install
+    ```
+
+3.  **Inicie o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    ```
+
+A aplicação estará acessível em `http://localhost:5173` (ou em outra porta, se a 5173 estiver ocupada).
+
 ## Disclaimer de Uso de Inteligência Artificial
 
 Este projeto utiliza recursos de Inteligência Artificial (IA) para fornecer algumas de suas funcionalidades. O uso das funcionalidades baseadas em IA está sujeito aos termos de uso e políticas de privacidade das plataformas e serviços envolvidos.
