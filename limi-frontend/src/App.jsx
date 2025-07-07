@@ -101,7 +101,11 @@ function App() {
 
   const handleBookClick = (bookId) => {
     setShowResults(false); // Hide results when a book is clicked
-    navigate(`/book/${bookId}`);
+    if (bookId === 'add-book-static') {
+      navigate('/add-book');
+    } else {
+      navigate(`/book/${bookId}`);
+    }
   };
 
   return (
@@ -124,21 +128,24 @@ function App() {
             placeholder="Pesquisar livros..."
             value={searchTerm}
             onChange={(e) => {
+              console.log('Input onChange triggered:', e.target.value);
               setSearchTerm(e.target.value);
               debouncedFetchSearchResults(e.target.value);
             }}
-            onFocus={() => searchTerm.length > 2 && setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 100)} // Delay to allow click on results
+            onFocus={() => setShowResults(true)} // Sempre mostra ao focar
+            onBlur={() => setTimeout(() => setShowResults(false), 200)} // Aumentado o delay para 200ms
           />
           <button type="submit" className="search-btn">Buscar</button>
-          {console.log('showResults:', showResults, 'searchResults.length:', searchResults.length)}
-          {showResults && searchResults.length > 0 && (
+          {showResults && (
             <div className="search-results-dropdown">
-              {searchResults.map((book) => (
+              {searchResults.length > 0 && searchResults.map((book) => (
                 <div key={book.id} className="search-result-item" onClick={() => handleBookClick(book.id)}>
                   {book.titulo}
                 </div>
               ))}
+              <div key="add-book-static" className="search-result-item" onClick={() => handleBookClick('add-book-static')}>
+                Adicionar Livro
+              </div>
             </div>
           )}
         </form>
