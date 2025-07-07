@@ -8,19 +8,15 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.select
 
 class FavoriteRepository {
 
     fun addFavorite(userId: Int, livroId: Int): Boolean = transaction {
-        val existing = UserFavorites.select(
-            (UserFavorites.user eq userId) and (UserFavorites.livro eq livroId)
-        ).count()
+        val existing = UserFavorites.select(UserFavorites.user eq userId and (UserFavorites.livro eq livroId)).count()
 
         if (existing == 0L) {
-            UserFavorites.insert {
-                it[user] = userId
-                it[livro] = livroId
-            }
+            UserFavorites.insert { it[user] = userId; it[livro] = livroId }
             true
         } else {
             false // Already a favorite
@@ -28,9 +24,7 @@ class FavoriteRepository {
     }
 
     fun removeFavorite(userId: Int, livroId: Int): Boolean = transaction {
-        UserFavorites.deleteWhere {
-            (user eq userId) and (livro eq livroId)
-        } > 0
+        UserFavorites.deleteWhere { user eq userId and (livro eq livroId) } > 0
     }
 
     fun getFavorites(userId: Int): List<Livro> = transaction {
@@ -40,8 +34,6 @@ class FavoriteRepository {
     }
 
     fun isFavorite(userId: Int, livroId: Int): Boolean = transaction {
-        UserFavorites.select(
-            (UserFavorites.user eq userId) and (UserFavorites.livro eq livroId)
-        ).count() > 0
+        UserFavorites.select(UserFavorites.user eq userId and (UserFavorites.livro eq livroId)).count() > 0
     }
 }

@@ -6,6 +6,8 @@ import com.limi.models.Users
 import com.limi.models.LivroGenero
 import com.limi.models.Livros
 import com.limi.models.Reviews
+import com.limi.models.UserFavorites
+import com.limi.models.ReviewLikes
 import io.ktor.client.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

@@ -9,7 +9,7 @@ function UserProfile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [activeSection, setActiveSection] = useState('personal-data');
+  const [activeSection, setActiveSection] = useState('personal-data'); // Default para dados pessoais
   const [favoriteBooks, setFavoriteBooks] = useState([]);
 
   useEffect(() => {
@@ -61,16 +61,21 @@ function UserProfile() {
   };
 
   const renderSection = () => {
-    if (activeSection === 'personal-data') {
-      return (
-        <div className="personal-data-section">
-          <h2>Dados Pessoais</h2>
-          <div className="user-info">
-            <p><strong>Nome:</strong> {user.nome}</p>
-            <p><strong>Email:</strong> {user.email}</p>
+    switch (activeSection) {
+      case 'personal-data':
+        return (
+          <div className="personal-data-section">
+            <h2>Dados Pessoais</h2>
+            <div className="user-info">
+              <p><strong>Nome:</strong> {user.nome}</p>
+              <p><strong>Email:</strong> {user.email}</p>
+            </div>
           </div>
-          <div className="change-password-section">
-            <h3>Alterar Senha</h3>
+        );
+      case 'change-password':
+        return (
+          <div className="change-password-section-content">
+            <h2>Alterar Senha</h2>
             {error && <div className="error-message">{error}</div>}
             {success && <div className="success-message">{success}</div>}
             <form onSubmit={handlePasswordChange}>
@@ -104,38 +109,40 @@ function UserProfile() {
               <button type="submit" className="btn-change-password">Alterar Senha</button>
             </form>
           </div>
-        </div>
-      );
-    } else if (activeSection === 'favorites') {
-      return (
-        <div className="favorites-section">
-          <h2>Meus Favoritos</h2>
-          {favoriteBooks.length > 0 ? (
-            <div className="favorite-books-list">
-              {favoriteBooks.map(book => (
-                <div key={book.id} className="favorite-book-item">
-                  <img src={book.urlImagem || 'https://via.placeholder.com/100x150.png?text=Sem+Capa'} alt={book.titulo} />
-                  <div className="favorite-book-info">
-                    <h4>{book.titulo}</h4>
-                    <p>{book.autor}</p>
+        );
+      case 'favorites':
+        return (
+          <div className="favorites-section">
+            <h2>Meus Favoritos</h2>
+            {favoriteBooks.length > 0 ? (
+              <div className="favorite-books-list">
+                {favoriteBooks.map(book => (
+                  <div key={book.id} className="favorite-book-item">
+                    <img src={book.urlImagem || 'https://via.placeholder.com/100x150.png?text=Sem+Capa'} alt={book.titulo} />
+                    <div className="favorite-book-info">
+                      <h4>{book.titulo}</h4>
+                      <p>{book.autor}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>Você ainda não adicionou nenhum livro aos favoritos.</p>
-          )}
-        </div>
-      );
+                ))}
+              </div>
+            ) : (
+              <p>Você ainda não adicionou nenhum livro aos favoritos.</p>
+            )}
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   return (
     <div className="user-profile-page">
-      <div className="user-profile-sidebar">
-        <ul>
-          <li className={activeSection === 'personal-data' ? 'active' : ''} onClick={() => setActiveSection('personal-data')}>Dados Pessoais</li>
-          <li className={activeSection === 'favorites' ? 'active' : ''} onClick={() => setActiveSection('favorites')}>Favoritos</li>
+      <div className="list-group-container user-profile-sidebar-override">
+        <ul className="list-group-grid">
+          <li className={activeSection === 'personal-data' ? 'list-group-item active' : 'list-group-item'} onClick={() => setActiveSection('personal-data')}>Dados Pessoais</li>
+          <li className={activeSection === 'change-password' ? 'list-group-item active' : 'list-group-item'} onClick={() => setActiveSection('change-password')}>Alterar Senha</li>
+          <li className={activeSection === 'favorites' ? 'list-group-item active' : 'list-group-item'} onClick={() => setActiveSection('favorites')}>Favoritos</li>
         </ul>
       </div>
       <div className="user-profile-content">

@@ -1,9 +1,8 @@
 package com.limi.models
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.IntIdTable
 
-object ReviewLikes : Table("review_likes") {
-    val review = reference("review_id", Reviews)
+object ReviewLikes : IntIdTable() {
     val user = reference("user_id", Users)
-    override val primaryKey = PrimaryKey(review, user, name = "PK_Review_Likes")
+    val review = reference("review_id", Reviews)
 }

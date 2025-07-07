@@ -14,6 +14,8 @@ import com.limi.repositories.LivroRepository
 import com.limi.repositories.ReviewRepository
 import com.limi.repositories.AutorRepository
 import com.limi.repositories.UserRepository
+import com.limi.repositories.FavoriteRepository
+import com.limi.repositories.LikeRepository
 import com.limi.controllers.*
 import com.limi.services.* // Import corrigido
 import com.limi.config.configureErrorHandling
@@ -23,6 +25,7 @@ import com.limi.services.AuthService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
+import io.ktor.client.plugins.HttpTimeout // Adicione esta linha
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.auth.*
 import com.limi.config.JwtConfig
@@ -53,6 +56,11 @@ fun Application.module() {
                     ignoreUnknownKeys = true
                 }
             )
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 30000 // 30 segundos
+            connectTimeoutMillis = 30000 // 30 segundos
+            socketTimeoutMillis = 30000 // 30 segundos
         }
     }
 
@@ -93,7 +101,6 @@ fun Application.module() {
     val userService = UserService(userRepository)
     val autorService = AutorService(autorRepository)
     val authService = AuthService(userRepository)
-    val favoriteRepository = FavoriteRepository()
     val favoriteRepository = FavoriteRepository()
     val favoriteService = FavoriteService(favoriteRepository)
     val likeRepository = LikeRepository()
