@@ -22,4 +22,8 @@ class ReviewService(private val reviewRepository: ReviewRepository, private val 
     fun updateReview(reviewId: Int, review: Review): Review? {
         return reviewRepository.updateReview(reviewId, review)
     }
+
+    fun getReviewById(reviewId: Int): Review? {
+        return reviewRepository.getReviewById(reviewId)
+    }
 }

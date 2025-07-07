@@ -11,6 +11,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.limi.models.ReviewCreateRequest
+import com.limi.models.ReviewUpdateRequest
 
 fun Route.reviewController(reviewService: ReviewService, userService: UserService) {
     route("/api/livros/{livroId}/reviews") {
@@ -60,12 +61,33 @@ fun Route.reviewController(reviewService: ReviewService, userService: UserServic
                     call.respond(HttpStatusCode.BadRequest, "Invalid review ID")
                     return@put
                 }
-                val review = call.receive<Review>()
-                val updatedReview = reviewService.updateReview(reviewId, review)
+                val principal = call.principal<JWTPrincipal>()
+                val authenticatedUserId = principal!!.payload.getClaim("userId").asInt()
+
+                val existingReview = reviewService.getReviewById(reviewId)
+                if (existingReview == null) {
+                    call.respond(HttpStatusCode.NotFound, "Review not found")
+                    return@put
+                }
+
+                if (existingReview.userId != authenticatedUserId) {
+                    call.respond(HttpStatusCode.Forbidden, "You are not authorized to update this review")
+                    return@put
+                }
+
+                val request = call.receive<ReviewUpdateRequest>()
+                val reviewToUpdate = Review(
+                    id = reviewId,
+                    livroId = existingReview.livroId,
+                    userId = authenticatedUserId,
+                    comentario = request.comentario,
+                    nota = request.nota
+                )
+                val updatedReview = reviewService.updateReview(reviewId, reviewToUpdate)
                 if (updatedReview != null) {
                     call.respond(updatedReview)
                 } else {
-                    call.respond(HttpStatusCode.NotFound)
+                    call.respond(HttpStatusCode.InternalServerError, "Failed to update review")
                 }
             }
 
@@ -75,11 +97,25 @@ fun Route.reviewController(reviewService: ReviewService, userService: UserServic
                     call.respond(HttpStatusCode.BadRequest, "Invalid review ID")
                     return@delete
                 }
+                val principal = call.principal<JWTPrincipal>()
+                val authenticatedUserId = principal!!.payload.getClaim("userId").asInt()
+
+                val existingReview = reviewService.getReviewById(reviewId)
+                if (existingReview == null) {
+                    call.respond(HttpStatusCode.NotFound, "Review not found")
+                    return@delete
+                }
+
+                if (existingReview.userId != authenticatedUserId) {
+                    call.respond(HttpStatusCode.Forbidden, "You are not authorized to delete this review")
+                    return@delete
+                }
+
                 val deleted = reviewService.deleteReview(reviewId)
                 if (deleted) {
                     call.respond(HttpStatusCode.NoContent)
                 } else {
-                    call.respond(HttpStatusCode.NotFound)
+                    call.respond(HttpStatusCode.InternalServerError, "Failed to delete review")
                 }
             }
         }

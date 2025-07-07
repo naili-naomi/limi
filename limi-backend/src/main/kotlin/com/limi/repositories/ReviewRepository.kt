@@ -55,4 +55,8 @@ class ReviewRepository {
             null
         }
     }
+
+    fun getReviewById(reviewId: Int): Review? = transaction {
+        ReviewEntity.findById(reviewId)?.toReview()
+    }
 }
