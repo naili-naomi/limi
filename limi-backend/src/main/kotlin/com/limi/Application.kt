@@ -46,7 +46,11 @@ fun Application.configureSecurity() {
 fun Application.module() {
     val client = HttpClient(CIO) {
         install(ClientContentNegotiation) {
-            json()
+            json(
+                kotlinx.serialization.json.Json {
+                    ignoreUnknownKeys = true
+                }
+            )
         }
     }
 
