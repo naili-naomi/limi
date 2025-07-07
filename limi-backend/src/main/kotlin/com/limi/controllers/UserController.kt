@@ -10,6 +10,7 @@ import io.ktor.http.HttpStatusCode // Adicione esta linha
 import com.limi.validation.validateForCreation
 import com.limi.DTO.UserLoginRequest
 import com.limi.exceptions.AuthenticationException
+import com.limi.exceptions.ValidationException
 import com.limi.DTO.UserResponse
 import com.limi.DTO.ErrorResponse // Adicione esta linha
 
@@ -33,10 +34,18 @@ fun Route.userRoutes(userService: UserService) {
         }
 
         post ("/cadastro"){
-            val novoUsuario = call.receive<User>()
-            novoUsuario.validateForCreation()
-            val criado = userService.adicionarUser(novoUsuario)
-            call.respond(HttpStatusCode.Created, UserResponse.of(criado))
+            try {
+                val novoUsuario = call.receive<User>()
+                novoUsuario.validateForCreation()
+                val criado = userService.adicionarUser(novoUsuario)
+                call.respond(HttpStatusCode.Created, UserResponse.of(criado))
+            } catch (e: ValidationException) {
+                println("DEBUG: ValidationException capturada. Mensagem: ${e.message}")
+                call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Erro de validação"))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respond(HttpStatusCode.InternalServerError, ErrorResponse(e.message ?: "Erro interno do servidor"))
+            }
         }
         post("/login") {
             val loginRequest = call.receive<UserLoginRequest>()

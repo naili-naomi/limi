@@ -12,20 +12,29 @@ import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 class UserService(private val userRepository: UserRepository) {
     fun adicionarUser(usuario: User): User {
+        if (usuario.senha.length < 6) {
+            throw ValidationException("senha", "A senha deve ter no mínimo 6 caracteres.")
+        }
+
         val senhaHash = BCrypt.hashpw(usuario.senha, BCrypt.gensalt())
         val usuarioComHash = usuario.copy(senha = senhaHash)
 
         return try {
             userRepository.addUser(usuarioComHash)
         } catch (e: ExposedSQLException) {
-            // Check for unique constraint violation (example for SQLite)
             if (e.message?.contains("UNIQUE constraint failed", ignoreCase = true) == true) {
-                throw ValidationException("email", "Já existe um usuário com este email")
+                if (e.message?.contains("email", ignoreCase = true) == true) {
+                    throw ValidationException("email", "Já existe um usuário com este e-mail.")
+                } else if (e.message?.contains("username", ignoreCase = true) == true) {
+                    throw ValidationException("username", "Já existe um usuário com este nome.")
+                } else {
+                    throw e
+                }
             } else {
-                throw e // Re-throw other SQL exceptions
+                throw e
             }
         } catch (e: Exception) {
-            throw e // Re-throw any other unexpected exceptions
+            throw e
         }
     }
     fun login(loginRequest: UserLoginRequest): String {
@@ -33,13 +42,13 @@ class UserService(private val userRepository: UserRepository) {
         val usuario = userRepository.buscarPorEmail(loginRequest.email)
             ?: run {
                 println("DEBUG: Usuário não encontrado para o email: ${loginRequest.email}")
-                throw AuthenticationException("Email ou senha inválidos")
+                throw AuthenticationException("Email inválido.")
             }
 
         println("DEBUG: Usuário encontrado: ${usuario.email}")
         if (!BCrypt.checkpw(loginRequest.senha, usuario.senha)) {
             println("DEBUG: Senha inválida para o email: ${loginRequest.email}")
-            throw AuthenticationException("Email ou senha inválidos")
+            throw AuthenticationException("Senha inválida.")
         }
 
         println("DEBUG: Senha verificada com sucesso para o email: ${loginRequest.email}")
