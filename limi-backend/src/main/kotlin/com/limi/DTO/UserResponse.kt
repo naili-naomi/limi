@@ -1,4 +1,4 @@
-package com.limi.models
+package com.limi.DTO
 
 import kotlinx.serialization.Serializable
 
