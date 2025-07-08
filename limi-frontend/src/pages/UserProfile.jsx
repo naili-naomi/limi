@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getFavorites } from '../api';
 import './UserProfile.css';
 
@@ -11,6 +12,7 @@ function UserProfile() {
   const [success, setSuccess] = useState('');
   const [activeSection, setActiveSection] = useState('personal-data'); // Default para dados pessoais
   const [favoriteBooks, setFavoriteBooks] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const nome = localStorage.getItem('nome');
@@ -117,7 +119,7 @@ function UserProfile() {
             {favoriteBooks.length > 0 ? (
               <div className="favorite-books-list">
                 {favoriteBooks.map(book => (
-                  <div key={book.id} className="favorite-book-item">
+                  <div key={book.id} className="favorite-book-item" onClick={() => navigate(`/book/${book.id}`)}>
                     <img src={book.urlImagem || 'https://via.placeholder.com/100x150.png?text=Sem+Capa'} alt={book.titulo} />
                     <div className="favorite-book-info">
                       <h4>{book.titulo}</h4>

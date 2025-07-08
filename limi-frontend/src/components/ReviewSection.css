@@ -73,10 +73,39 @@
   background-color: #8a003a;
 }
 
+.edit-review-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  justify-content: flex-end; /* Align buttons to the right */
+}
+
+.edit-review-actions button {
+  background-color: #a30045;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.edit-review-actions button:hover {
+  background-color: #8a003a;
+}
+
 .review-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.edit-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
 }
 
 .review-form h4 {
@@ -106,6 +135,7 @@
   border-radius: 5px;
   font-size: 1rem;
   resize: vertical;
+  box-sizing: border-box;
 }
 
 .review-form button {

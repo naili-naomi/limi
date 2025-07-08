@@ -67,7 +67,7 @@ fun Application.module() {
     // Inicialização do banco
     DatabaseFactory.init(
         client = client,
-        url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db",
+        url = "jdbc:sqlite:/home/naomi/limi/catalogo.db",
         driver = "org.sqlite.JDBC"
     )
 

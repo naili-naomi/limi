@@ -46,7 +46,7 @@ h1 {
   font-size: 1.5rem;
   margin: 0 0.5rem;
 }
-.app-container header img {
+.logo {
   height: 110px;
   border-radius: 8px;
   transition: transform 0.3s;

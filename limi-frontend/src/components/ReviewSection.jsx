@@ -219,8 +219,10 @@ function ReviewSection({ bookId, isLoggedIn }) {
                   onChange={(e) => setEditingReviewText(e.target.value)}
                   rows="3"
                 ></textarea>
-                <button type="submit">Salvar</button>
-                <button type="button" onClick={() => setEditingReviewId(null)}>Cancelar</button>
+                <div className="edit-review-actions">
+                  <button type="submit">Salvar</button>
+                  <button type="button" onClick={() => setEditingReviewId(null)}>Cancelar</button>
+                </div>
               </form>
             ) : (
               <>
