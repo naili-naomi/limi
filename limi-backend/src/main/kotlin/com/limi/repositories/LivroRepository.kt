@@ -17,6 +17,10 @@ class LivroRepository {
         LivroEntity.findById(id)?.toLivro()
     }
 
+    fun findByTitle(titulo: String): Livro? = transaction {
+        LivroEntity.find { Livros.titulo eq titulo }.firstOrNull()?.toLivro()
+    }
+
     fun getLivrosByGenero(genero: String): List<Livro> = transaction {
         GeneroEntity.find { Generos.nome eq genero }.firstOrNull()?.livros?.map { it.toLivro() } ?: emptyList()
     }

@@ -41,7 +41,7 @@ const handleSubmit = async (e) => {
     navigate('/'); // redireciona pra home ou detalhes
   } catch (err) {
     console.error("Erro ao adicionar livro:", err);
-    setError(err.message);
+    setError(err.message || 'Erro ao adicionar livro');
   }
 };
 

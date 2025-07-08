@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.JWTPrincipal
 import com.limi.DTO.AddBookRequest
+import com.limi.exceptions.ValidationException
 import com.limi.clients.buscarLivroGoogle
 
 fun Route.livroRoutes(livroService: LivroService) {
@@ -47,6 +48,8 @@ fun Route.livroRoutes(livroService: LivroService) {
                 val novoLivro = call.receive<Livro>()
                 val livroSalvo = livroService.adicionarLivro(novoLivro)
                 call.respond(HttpStatusCode.Created, livroSalvo)
+            } catch (e: ValidationException) {
+                call.respond(HttpStatusCode.BadRequest, e.errors)
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.InternalServerError,
@@ -67,6 +70,8 @@ fun Route.livroRoutes(livroService: LivroService) {
                 val livroSalvo = livroService.adicionarLivro(livro)
                 call.respond(HttpStatusCode.Created, livroSalvo)
 
+            } catch (e: ValidationException) {
+                call.respond(HttpStatusCode.BadRequest, e.errors)
             } catch (e: Exception) {
                 e.printStackTrace() // <- Isso ajuda no terminal
                 call.respond(HttpStatusCode.InternalServerError, mapOf("error" to (e.message ?: "Erro interno")))

@@ -46,7 +46,7 @@ export async function addBook(bookData, token) {
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
     console.error('Erro ao adicionar livro:', data);
-    throw new Error(data.error || 'Erro ao adicionar livro');
+    throw new Error(data.titulo || 'Erro ao adicionar livro');
   }
 
   const json = await response.json();

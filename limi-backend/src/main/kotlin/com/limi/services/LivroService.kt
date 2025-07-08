@@ -13,7 +13,12 @@ class LivroService(private val livroRepository: LivroRepository,
         // 1) validações locais (já existentes)
         livro.validateForCreation()
 
-        // 2) validação externa
+        // 2) Verificação de duplicatas no banco de dados
+        livroRepository.findByTitle(livro.titulo)?.let {
+            throw ValidationException("titulo", "Livro já existe no catálogo")
+        }
+
+        // 3) validação externa
         val found = if (/* você tiver ISBN no DTO */ false) {
             // existsByIsbn(livro.isbn)
             false
@@ -24,7 +29,7 @@ class LivroService(private val livroRepository: LivroRepository,
             throw ValidationException("titulo", "Livro não encontrado em acervos oficiais")
         }
 
-        // 3) persiste no banco
+        // 4) persiste no banco
         return livroRepository.addLivro(livro)
     }
 
