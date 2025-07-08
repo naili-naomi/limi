@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFavorites } from '../api';
+import { getFavorites, changePassword } from '../api';
 import './UserProfile.css';
 
 function UserProfile() {
   const [user, setUser] = useState({ nome: '', email: '' });
+
+  useEffect(() => {
+    const nome = localStorage.getItem('nome');
+    const email = localStorage.getItem('email');
+    setUser({ nome: nome || '', email: email || '' });
+  }, []);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,13 +20,7 @@ function UserProfile() {
   const [favoriteBooks, setFavoriteBooks] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const nome = localStorage.getItem('nome');
-    const email = localStorage.getItem('email');
-    if (nome) {
-      setUser({ nome, email: email || 'email@exemplo.com' });
-    }
-  }, []);
+  
 
   useEffect(() => {
     if (activeSection === 'favorites') {
@@ -40,7 +40,7 @@ function UserProfile() {
     }
   }, [activeSection]);
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -54,12 +54,17 @@ function UserProfile() {
       return;
     }
 
-    console.log('Mudando a senha...');
-
-    setSuccess('Senha alterada com sucesso!');
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+    try {
+      const token = localStorage.getItem('token');
+      const email = localStorage.getItem('email');
+      await changePassword(currentPassword, newPassword, token);
+      setSuccess('Senha alterada com sucesso!');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const renderSection = () => {

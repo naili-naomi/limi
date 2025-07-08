@@ -13,6 +13,9 @@ import com.limi.exceptions.AuthenticationException
 import com.limi.exceptions.ValidationException
 import com.limi.DTO.UserResponse
 import com.limi.DTO.ErrorResponse // Adicione esta linha
+import com.limi.DTO.UpdatePasswordRequest
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.JWTPrincipal
 
 
 fun Route.userRoutes(userService: UserService) {
@@ -55,7 +58,7 @@ fun Route.userRoutes(userService: UserService) {
                 val usuario = userService.buscarPorEmail(loginRequest.email)
                     ?: throw AuthenticationException("Usuário não encontrado após login")
 
-                call.respond(HttpStatusCode.OK, mapOf("token" to token, "nome" to usuario.nome))
+                call.respond(HttpStatusCode.OK, mapOf("token" to token, "nome" to usuario.nome, "email" to usuario.email))
             } catch (e: AuthenticationException) {
                 call.respond(HttpStatusCode.Unauthorized, ErrorResponse(e.message ?: "Email ou senha inválidos"))
             } catch (e: Exception) {
@@ -71,6 +74,27 @@ fun Route.userRoutes(userService: UserService) {
             val user = call.receive<User>()
             val atualizado = userService.atualizarUser(id, user)
             call.respond(atualizado)
+        }
+
+        authenticate("auth-jwt") {
+            put("/change-password") {
+                try {
+                    val principal = call.principal<JWTPrincipal>()
+                    val userEmail = principal?.payload?.getClaim("email")?.asString()
+                        ?: throw AuthenticationException("Token JWT inválido ou sem email.")
+
+                    val request = call.receive<UpdatePasswordRequest>()
+                    userService.changePassword(userEmail, request.currentPassword, request.newPassword)
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Senha alterada com sucesso"))
+                } catch (e: AuthenticationException) {
+                    call.respond(HttpStatusCode.Unauthorized, ErrorResponse(e.message ?: "Senha atual incorreta"))
+                } catch (e: ValidationException) {
+                    call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Erro de validação"))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    call.respond(HttpStatusCode.InternalServerError, ErrorResponse(e.message ?: "Erro interno do servidor"))
+                }
+            }
         }
 
     }

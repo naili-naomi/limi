@@ -27,7 +27,9 @@ export async function loginUsuario({ email, senha }) {
     throw new Error(data.error || 'Erro no login');
   }
 
-  return await response.json(); // deve conter { token: "..." }
+  const data = await response.json();
+  localStorage.setItem('email', data.email);
+  return data; // deve conter { token: "...", nome: "...", email: "..." }
 }
 
 export async function addBook(bookData, token) {
@@ -274,7 +276,7 @@ export const removeFavorite = async (livroId, token) => {
   }
 };
 
-export const isFavorite = async (livroId, token) => {
+export async function isFavorite(livroId, token) {
   const response = await fetch(`${API_BASE}/favorites/isFavorite/${livroId}`, {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -284,4 +286,22 @@ export const isFavorite = async (livroId, token) => {
     throw new Error('Failed to check favorite status');
   }
   return await response.json();
-};
+}
+
+export async function changePassword(currentPassword, newPassword, token) {
+  const response = await fetch(`${API_BASE}/usuarios/change-password`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ currentPassword, newPassword })
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao alterar a senha');
+  }
+
+  return await response.json();
+}

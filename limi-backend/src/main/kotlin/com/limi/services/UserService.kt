@@ -85,4 +85,20 @@ class UserService(private val userRepository: UserRepository) {
     fun getUserById(id: Int): User? {
         return userRepository.getUserById(id)
     }
+
+    fun changePassword(email: String, currentPassword: String, newPassword: String) {
+        val user = userRepository.buscarPorEmail(email)
+            ?: throw AuthenticationException("Usuário não encontrado")
+
+        if (!BCrypt.checkpw(currentPassword, user.senha)) {
+            throw AuthenticationException("Senha atual incorreta")
+        }
+
+        if (newPassword.length < 6) {
+            throw ValidationException("newPassword", "A nova senha deve ter no mínimo 6 caracteres.")
+        }
+
+        val hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt())
+        userRepository.updateUser(user.id, user.copy(senha = hashedNewPassword))
+    }
 }
