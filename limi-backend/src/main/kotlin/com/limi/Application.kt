@@ -67,7 +67,7 @@ fun Application.module() {
     // Inicialização do banco
     DatabaseFactory.init(
         client = client,
-        url = "jdbc:sqlite:/home/naomi/limi/catalogo.db",
+        url = "jdbc:sqlite:/home/naili/IdeaProjects/limi/catalogo.db",
         driver = "org.sqlite.JDBC"
     )
 
@@ -80,9 +80,11 @@ fun Application.module() {
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Patch)
         allowMethod(HttpMethod.Options) // necessário para pré-flight requests
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization) //
+        allowCredentials = true
     }
 
     configureSecurity()

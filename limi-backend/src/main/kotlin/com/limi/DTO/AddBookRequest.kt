@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AddBookRequest(
     val titulo: String,
-    val genero: String
+    val generos: List<String>
 )

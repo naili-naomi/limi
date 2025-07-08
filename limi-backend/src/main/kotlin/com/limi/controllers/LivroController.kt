@@ -9,6 +9,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.JWTPrincipal
+import com.limi.DTO.AddBookRequest
+import com.limi.clients.buscarLivroGoogle
 
 fun Route.livroRoutes(livroService: LivroService) {
 
@@ -50,6 +52,24 @@ fun Route.livroRoutes(livroService: LivroService) {
                     HttpStatusCode.InternalServerError,
                     "Erro ao adicionar livro: ${e.localizedMessage}"
                 )
+            }
+        }
+        post("/complementar") {
+            try {
+                val input = call.receive<AddBookRequest>()
+                val livro = buscarLivroGoogle(input.titulo, input.generos)
+
+                if (livro == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Não foi possível encontrar o livro na API do Google.")
+                    return@post
+                }
+
+                val livroSalvo = livroService.adicionarLivro(livro)
+                call.respond(HttpStatusCode.Created, livroSalvo)
+
+            } catch (e: Exception) {
+                e.printStackTrace() // <- Isso ajuda no terminal
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to (e.message ?: "Erro interno")))
             }
         }
 

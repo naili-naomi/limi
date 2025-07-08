@@ -10,32 +10,41 @@ function AddBookPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("handleSubmit chamado");
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setError('Você precisa estar logado para adicionar um livro.');
-      return;
-    }
+  setError('');
+  setSuccess('');
 
-    const bookData = {
-      titulo: title,
-      generos: genres.split(',').map(g => g.trim()),
-    };
+  const token = localStorage.getItem('token');
+  console.log("Token do usuário:", token);
+  if (!token) {
+    setError('Você precisa estar logado para adicionar um livro.');
+    console.log("Erro: usuário não está logado.");
+    return;
+  }
 
-    try {
-      await addBook(bookData, token);
-      setSuccess('Livro adicionado com sucesso!');
-      setTitle('');
-      setGenres('');
-      navigate('/'); // Redirect to home or book details page
-    } catch (err) {
-      setError(err.message);
-    }
+  const bookData = {
+    titulo: title,
+    generos: genres.split(',').map(g => g.trim()),
   };
+
+  console.log("Dados do livro a serem enviados:", bookData);
+
+  try {
+    await addBook(bookData, token);
+    console.log("Requisição para adicionar livro bem sucedida");
+    setSuccess('Livro adicionado com sucesso!');
+    setTitle('');
+    setGenres('');
+    navigate('/'); // redireciona pra home ou detalhes
+  } catch (err) {
+    console.error("Erro ao adicionar livro:", err);
+    setError(err.message);
+  }
+};
+
 
   return (
     <div className="add-book-container">

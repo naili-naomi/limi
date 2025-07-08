@@ -31,7 +31,8 @@ export async function loginUsuario({ email, senha }) {
 }
 
 export async function addBook(bookData, token) {
-  const response = await fetch(`${API_BASE}/livros`, {
+  console.log('Enviando livro para adicionar:', bookData);
+  const response = await fetch(`${API_BASE}/livros/complementar`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -40,12 +41,17 @@ export async function addBook(bookData, token) {
     body: JSON.stringify(bookData)
   });
 
+  console.log('Resposta do servidor:', response.status);
+
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
+    console.error('Erro ao adicionar livro:', data);
     throw new Error(data.error || 'Erro ao adicionar livro');
   }
 
-  return await response.json();
+  const json = await response.json();
+  console.log('Livro adicionado com sucesso:', json);
+  return json;
 }
 
 export async function getLivros() {
@@ -257,7 +263,7 @@ export const addFavorite = async (livroId, token) => {
 };
 
 export const removeFavorite = async (livroId, token) => {
-  const response = await await fetch(`${API_BASE}/favorites/${livroId}`, {
+  const response = await fetch(`${API_BASE}/favorites/${livroId}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,

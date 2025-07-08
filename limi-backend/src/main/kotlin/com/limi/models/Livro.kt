@@ -41,7 +41,7 @@ class LivroEntity(id: EntityID<Int>) : IntEntity(id) {
 
 @Serializable
 data class Livro(
-    val id: Int,
+    val id: Int = 0,
     val titulo: String,
     val autor: String,
     val anoPublicacao: Int,
