@@ -14,6 +14,8 @@ class UserRepository {
                 username = user.username
                 email = user.email
                 senha = user.senha
+                resetToken = user.resetToken
+                resetTokenExpiry = user.resetTokenExpiry
             }.toUser()
         }
 

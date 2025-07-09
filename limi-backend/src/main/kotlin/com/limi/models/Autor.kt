@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 // Data Class (DTO)
 @Serializable
 data class Autor(
-    val id: Int,
+    val id: Int? = null,
     val nome: String
 )
 

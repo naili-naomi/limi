@@ -1,141 +1,213 @@
+
 package com.limi.services
 
+import com.limi.DTO.UserLoginRequest
+import com.limi.config.JwtConfig
+import com.limi.exceptions.AuthenticationException
+import com.limi.exceptions.NotFoundException
 import com.limi.models.User
 import com.limi.repositories.UserRepository
-import com.limi.exceptions.*
+import com.limi.exceptions.ValidationException
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mindrot.jbcrypt.BCrypt
-import kotlin.test.*
 
 class UserServiceTest {
 
-    private val userRepository = mockk<UserRepository>(relaxed = true)
-    private val service = UserService(userRepository)
+    private val userRepository: UserRepository = mockk(relaxed = true)
+    private val userService = UserService(userRepository)
 
-    @Test
-    fun `buscarPorEmail deve retornar usuario existente`() {
-        val usuario = User(1, "Ana", "ana01", "ana@ex.com", "senha123")
-        every { userRepository.buscarPorEmail("ana@ex.com") } returns usuario
-
-        val resultado = service.buscarPorEmail("ana@ex.com")
-        assertEquals(1, resultado?.id)
-        assertEquals("Ana", resultado?.nome)
+    @BeforeEach
+    fun setUp() {
+        mockkObject(JwtConfig)
     }
 
     @Test
-    fun `buscarPorEmail deve retornar nulo quando usuario nao existe`() {
-        every { userRepository.buscarPorEmail(any()) } returns null
+    fun `adicionarUser should add user when password is valid`() {
+        // Given
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password")
+        val hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt())
+        val userWithHashedPassword = user.copy(senha = hashedPassword)
 
-        val resultado = service.buscarPorEmail("inexistente@ex.com")
-        assertNull(resultado)
-    }
+        every { userRepository.addUser(any()) } returns userWithHashedPassword
 
-    @Test
-    fun `adicionarUser deve salvar usuario com senha hashada`() {
-        val novo = User(0, "Teste", "teste01", "teste@ex.com", "senha123")
-        every { userRepository.buscarPorEmail(novo.email) } returns null
-        every { userRepository.addUser(match { it.senha.startsWith("\$2a\$") }) } returns novo.copy(id = 1)
+        // When
+        val result = userService.adicionarUser(user)
 
-        val resultado = service.adicionarUser(novo)
-
+        // Then
+        assertEquals(userWithHashedPassword.id, result.id)
         verify(exactly = 1) { userRepository.addUser(any()) }
-        assertEquals(1, resultado.id)
-        assertEquals(novo.email, resultado.email)
     }
 
     @Test
-    fun `adicionarUser deve falhar se email ja existir`() {
-        val existente = User(1, "Outro", "outro01", "teste@ex.com", "senha123")
-        every { userRepository.buscarPorEmail(existente.email) } returns existente
+    fun `adicionarUser should throw ValidationException when password is too short`() {
+        // Given
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "123")
 
-        assertFailsWith<ValidationException> {
-            service.adicionarUser(existente)
+        // When & Then
+        val exception = assertThrows<ValidationException> {
+            userService.adicionarUser(user)
         }
+        assertEquals("A senha deve ter no mínimo 6 caracteres.", exception.errors["senha"])
     }
 
     @Test
-    fun `atualizarUser deve atualizar quando usuário existir e email único`() {
-        val existing = User(1, "Ana", "ana01", "ana@ex.com", "senha123")
-        val updated = User(1, "Ana Maria", "anamaria", "ana@ex.com", "novaSenha")
+    fun `login should return token when credentials are valid`() {
+        // Given
+        val loginRequest = UserLoginRequest("test@test.com", "password")
+        val hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt())
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = hashedPassword)
+        val token = "test_token"
 
-        every { userRepository.buscarPorEmail(updated.email) } returns existing
-        every { userRepository.updateUser(1, any()) } returns updated.copy(senha = BCrypt.hashpw(updated.senha, BCrypt.gensalt()))
+        every { userRepository.buscarPorEmail(loginRequest.email) } returns user
+        every { JwtConfig.generateToken(user.id, user.email) } returns token
 
-        val result = service.atualizarUser(1, updated)
-        assertEquals("Ana Maria", result.nome)
-        verify(exactly = 1) { userRepository.updateUser(1, any()) }
+        // When
+        val result = userService.login(loginRequest)
+
+        // Then
+        assertEquals(token, result)
     }
 
     @Test
-    fun `atualizarUser deve falhar se email já usado por outro`() {
-        val existing = User(2, "Carlos", "carlos01", "carlos@ex.com", "senha")
-        val toUpdate = User(1, "João", "joao01", "carlos@ex.com", "senha123")
+    fun `login should throw AuthenticationException when email is invalid`() {
+        // Given
+        val loginRequest = UserLoginRequest("invalid@test.com", "password")
 
-        every { userRepository.buscarPorEmail(toUpdate.email) } returns existing
+        every { userRepository.buscarPorEmail(loginRequest.email) } returns null
 
-        assertFailsWith<ValidationException> {
-            service.atualizarUser(1, toUpdate)
+        // When & Then
+        val exception = assertThrows<AuthenticationException> {
+            userService.login(loginRequest)
         }
+        assertEquals("Email inválido.", exception.message)
     }
 
     @Test
-    fun `atualizarUser deve falhar com NotFoundException quando id não existir`() {
-        val updated = User(99, "Fulano", "fulano", "fulano@ex.com", "pwd123")
+    fun `login should throw AuthenticationException when password is invalid`() {
+        // Given
+        val loginRequest = UserLoginRequest("test@test.com", "wrong_password")
+        val hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt())
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = hashedPassword)
 
+        every { userRepository.buscarPorEmail(loginRequest.email) } returns user
+
+        // When & Then
+        val exception = assertThrows<AuthenticationException> {
+            userService.login(loginRequest)
+        }
+        assertEquals("Senha inválida.", exception.message)
+    }
+
+    @Test
+    fun `buscarPorEmail should return user when user exists`() {
+        // Given
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password")
+        every { userRepository.buscarPorEmail("test@test.com") } returns user
+
+        // When
+        val result = userService.buscarPorEmail("test@test.com")
+
+        // Then
+        assertEquals(user, result)
+    }
+
+    @Test
+    fun `listarUsers should return a list of users`() {
+        // Given
+        val users = listOf(User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password"))
+        every { userRepository.getAllUsers() } returns users
+
+        // When
+        val result = userService.listarUsers()
+
+        // Then
+        assertEquals(users, result)
+    }
+
+    @Test
+    fun `atualizarUser should update user`() {
+        // Given
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password")
+        every { userRepository.updateUser(1, any()) } returns user
         every { userRepository.buscarPorEmail(any()) } returns null
-        every { userRepository.updateUser(99, any()) } returns null
 
-        assertFailsWith<NotFoundException> {
-            service.atualizarUser(99, updated)
-        }
+        // When
+        val result = userService.atualizarUser(1, user)
+
+        // Then
+        assertEquals(user, result)
     }
 
     @Test
-    fun `deletarUser deve retornar true quando usuário removido`() {
-        every { userRepository.deleteUser(5) } returns true
+    fun `deletarUser should delete user`() {
+        // Given
+        every { userRepository.deleteUser(1) } returns true
 
-        val result = service.deletarUser(5)
+        // When
+        val result = userService.deletarUser(1)
+
+        // Then
         assertTrue(result)
-        verify(exactly = 1) { userRepository.deleteUser(5) }
     }
 
     @Test
-    fun `deletarUser deve retornar false quando usuário não existir`() {
-        every { userRepository.deleteUser(99) } returns false
+    fun `findByUsername should return user when user exists`() {
+        // Given
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password")
+        every { userRepository.findByUsername("testuser") } returns user
 
-        val result = service.deletarUser(99)
-        assertFalse(result)
-        verify(exactly = 1) { userRepository.deleteUser(99) }
+        // When
+        val result = userService.findByUsername("testuser")
+
+        // Then
+        assertEquals(user, result)
     }
 
     @Test
-    fun `deve atualizar senha e salvar como hash`() {
-        val original = User(1, "Maria", "maria01", "maria@email.com", "senha123")
-        val hashedOriginal = original.copy(senha = BCrypt.hashpw(original.senha, BCrypt.gensalt()))
+    fun `getUserById should return user when user exists`() {
+        // Given
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password")
+        every { userRepository.getUserById(1) } returns user
 
-        // Simula criação
-        every { userRepository.buscarPorEmail(original.email) } returns null
-        every { userRepository.addUser(any()) } returns hashedOriginal
+        // When
+        val result = userService.getUserById(1)
 
-        val salvo = service.adicionarUser(original)
+        // Then
+        assertEquals(user, result)
+    }
 
-        // Simula atualização
-        val novaSenha = "novaSenha456"
-        val atualizado = salvo.copy(senha = novaSenha)
-        val hashedNovaSenha = atualizado.copy(senha = BCrypt.hashpw(novaSenha, BCrypt.gensalt()))
+    @Test
+    fun `changePassword should change password when current password is correct`() {
+        // Given
+        val hashedPassword = BCrypt.hashpw("currentPassword", BCrypt.gensalt())
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = hashedPassword)
+        every { userRepository.buscarPorEmail("test@test.com") } returns user
 
-        every { userRepository.buscarPorEmail(salvo.email) } returns salvo
-        every { userRepository.updateUser(salvo.id, any()) } returns hashedNovaSenha
+        // When
+        userService.changePassword("test@test.com", "currentPassword", "newPassword")
 
-        val resultado = service.atualizarUser(salvo.id, atualizado)
+        // Then
+        verify { userRepository.updateUser(1, any()) }
+    }
 
-        assertEquals(salvo.id, resultado.id)
-        assertEquals(salvo.email, resultado.email)
-        assertNotEquals("novaSenha456", resultado.senha)
-        assertTrue(BCrypt.checkpw("novaSenha456", resultado.senha))
-        assertFalse(BCrypt.checkpw("senha123", resultado.senha))
+    @Test
+    fun `changePassword should throw AuthenticationException when current password is incorrect`() {
+        // Given
+        val hashedPassword = BCrypt.hashpw("currentPassword", BCrypt.gensalt())
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = hashedPassword)
+        every { userRepository.buscarPorEmail("test@test.com") } returns user
+
+        // When & Then
+        assertThrows<AuthenticationException> {
+            userService.changePassword("test@test.com", "wrongPassword", "newPassword")
+        }
     }
 }

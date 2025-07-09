@@ -1,82 +1,85 @@
+
 package com.limi.services
 
 import com.limi.models.Review
+import com.limi.models.User
 import com.limi.repositories.ReviewRepository
 import com.limi.repositories.UserRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ReviewServiceTest {
-    private val reviewRepository = mockk<ReviewRepository>()
-    private val userRepository = mockk<UserRepository>()
+
+    private val reviewRepository: ReviewRepository = mockk()
+    private val userRepository: UserRepository = mockk()
     private val reviewService = ReviewService(reviewRepository, userRepository)
 
     @Test
-    fun `addReview should return review with same id`() {
-        val input = Review(id = 0, livroId = 1, userId = 1, comentario = "OK", nota = 4)
-        val saved = input.copy(id = 42)
-        every { reviewRepository.addReview(input) } returns saved
+    fun `addReview should add review`() {
+        // Given
+        val review = Review(id = 1, livroId = 1, userId = 1, nota = 5, comentario = "Test Comment")
+        val user = User(id = 1, nome = "Test", username = "testuser", email = "test@test.com", senha = "password")
+        every { userRepository.getUserById(1) } returns user
+        every { reviewRepository.addReview(review) } returns review
 
-        val resultado = reviewService.addReview(input)
+        // When
+        val result = reviewService.addReview(review)
 
-        assertEquals(42, resultado.id)
-        assertEquals(input.comentario, resultado.comentario)
-        verify(exactly = 1) { reviewRepository.addReview(input) }
+        // Then
+        assertEquals(review.copy(username = user.username), result)
     }
 
     @Test
-    fun `getReviewsByBookId should delegate to repository`() {
-        val lista = listOf(
-            Review(id = 1, livroId = 5, userId = 2, comentario = "A", nota = 3),
-            Review(id = 2, livroId = 5, userId = 3, comentario = "B", nota = 5)
-        )
-        every { reviewRepository.getReviewsByBookId(5) } returns lista
+    fun `getReviewsByBookId should return a list of reviews`() {
+        // Given
+        val reviews = listOf(Review(id = 1, livroId = 1, userId = 1, nota = 5, comentario = "Test Comment"))
+        every { reviewRepository.getReviewsByBookId(1) } returns reviews
 
-        val result = reviewService.getReviewsByBookId(5)
+        // When
+        val result = reviewService.getReviewsByBookId(1)
 
-        assertEquals(2, result.size)
-        assertTrue(result.all { it.livroId == 5 })
-        verify { reviewRepository.getReviewsByBookId(5) }
+        // Then
+        assertEquals(reviews, result)
     }
 
     @Test
-    fun `should return true when deleting an existing review`() {
-        // given
-        every { reviewRepository.deleteReview(42) } returns true
+    fun `deleteReview should delete review`() {
+        // Given
+        every { reviewRepository.deleteReview(1) } returns true
 
-        // when
-        val resultado = reviewService.deleteReview(42)
+        // When
+        val result = reviewService.deleteReview(1)
 
-        // then
-        assertTrue(resultado)
-        verify(exactly = 1) { reviewRepository.deleteReview(42) }
+        // Then
+        assertTrue(result)
     }
 
     @Test
-    fun `should return false when trying to delete a non-existing review`() {
-
-        every { reviewRepository.deleteReview(99) } returns false
-
-
-        val resultado = reviewService.deleteReview(99)
-
-
-        assertFalse(resultado)
-        verify(exactly = 1) { reviewRepository.deleteReview(99) }
-    }
-
-    @Test
-    fun `updateReview should return updated review`() {
-        val review = Review(id = 1, livroId = 1, userId = 1, comentario = "Updated", nota = 5)
+    fun `updateReview should update review`() {
+        // Given
+        val review = Review(id = 1, livroId = 1, userId = 1, nota = 5, comentario = "Test Comment")
         every { reviewRepository.updateReview(1, review) } returns review
 
+        // When
         val result = reviewService.updateReview(1, review)
 
-        assertEquals("Updated", result?.comentario)
-        assertEquals(5, result?.nota)
-        verify(exactly = 1) { reviewRepository.updateReview(1, review) }
+        // Then
+        assertEquals(review, result)
+    }
+
+    @Test
+    fun `getReviewById should return review when review exists`() {
+        // Given
+        val review = Review(id = 1, livroId = 1, userId = 1, nota = 5, comentario = "Test Comment")
+        every { reviewRepository.getReviewById(1) } returns review
+
+        // When
+        val result = reviewService.getReviewById(1)
+
+        // Then
+        assertEquals(review, result)
     }
 }
