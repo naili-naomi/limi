@@ -39,6 +39,24 @@ O sistema é dividido em duas experiências principais:
 
 Para executar a aplicação completa, você precisará iniciar o back-end e o front-end em terminais separados.
 
+### Pendências
+Antes de rodar, é necesário alterar alguma váriaveis.
+1. No arquivo /limi/limi-backend/gradle.properties, altere o caminho do Java instalado na máquina. (Você pode encontrar ao rodar echo $JAVA_HOME)
+
+ ```
+      org.gradle.java.home=/usr/lib/jvm/seu-java
+      ```
+2. Além disso, é necessário alterar o caminho do bando de dados (catalogo.db) no arquivo /limi/limi-backend/src/main/kotlin/com/limi/Application.kt. Altere pelo caminho da sua máquina local.
+
+``` Kotlin
+url = "jdbc:sqlite:seu/caminho/limi/catalogo.db",
+      ```
+3. Para que a função de "Esqueci senha" funcione, é necessário exportar algumas variáveis locais:
+``` bash
+export GMAIL_PASSWORD="engfrlnjmpbgdbnu"
+export GMAIL_USERNAME="adm.limi1234@gmail.com"
+  ```
+
 ### 1. Rodando o Back-end (Kotlin + Ktor)
 
 O back-end é responsável por servir a API e se conectar ao banco de dados.
