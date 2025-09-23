@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Toast from './Toast';
 import './ReviewSection.css';
-import { getReviewsByBookId, addReview, updateReview, deleteReview, decodeJwtToken } from '../api';
+import { getReviewsByBookId, addReview, updateReview, deleteReview, decodeJwtToken, addLike, removeLike } from '../api';
 
 function ReviewSection({ bookId, isLoggedIn }) {
   const [reviews, setReviews] = useState([]);
@@ -25,7 +25,8 @@ function ReviewSection({ bookId, isLoggedIn }) {
 
     const fetchReviews = async () => {
       try {
-        const fetchedReviews = await getReviewsByBookId(bookId);
+        const token = localStorage.getItem('token');
+        const fetchedReviews = await getReviewsByBookId(bookId, token);
         setReviews(fetchedReviews);
       } catch (error) {
         console.error('Erro ao buscar avaliações:', error);
@@ -76,7 +77,7 @@ function ReviewSection({ bookId, isLoggedIn }) {
     await new Promise(resolve => setTimeout(resolve, 300)); // Pequeno delay
 
     // 3. Buscar reviews atualizadas
-    const updatedReviews = await getReviewsByBookId(bookId);
+    const updatedReviews = await getReviewsByBookId(bookId, token);
     setReviews(updatedReviews);
 
     // 4. Resetar formulário
@@ -91,7 +92,7 @@ function ReviewSection({ bookId, isLoggedIn }) {
 
   const handleEditClick = (review) => {
     setEditingReviewId(review.id);
-    setEditingReviewText(review.comentario);
+    setEditingReviewText(review.review);
     setEditingReviewRating(review.nota);
   };
 
@@ -159,23 +160,31 @@ function ReviewSection({ bookId, isLoggedIn }) {
       return;
     }
 
-    const isLiked = likedReviews.has(reviewId);
+    const review = reviews.find(r => r.id === reviewId);
+    if (!review) return;
+
+    const isLiked = review.isLiked;
+
+    // Optimistic update
+    setReviews(reviews.map(r =>
+      r.id === reviewId
+        ? { ...r, isLiked: !isLiked, likesCount: isLiked ? r.likesCount - 1 : r.likesCount + 1 }
+        : r
+    ));
 
     try {
       if (isLiked) {
-        // Unlike
         await removeLike(reviewId, token);
-        setLikedReviews(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(reviewId);
-          return newSet;
-        });
       } else {
-        // Like
         await addLike(reviewId, token);
-        setLikedReviews(prev => new Set(prev).add(reviewId));
       }
     } catch (error) {
+      // Revert optimistic update on error
+      setReviews(reviews.map(r =>
+        r.id === reviewId
+          ? { ...r, isLiked: isLiked, likesCount: review.likesCount }
+          : r
+      ));
       console.error('Erro ao curtir avaliação:', error);
       setToast({ message: 'Erro ao curtir avaliação', type: 'error' });
     }
@@ -227,9 +236,13 @@ function ReviewSection({ bookId, isLoggedIn }) {
             ) : (
               <>
                 <p><strong>{review.username}</strong> {renderStars(review.nota)}</p>
-                <p>{review.comentario}</p>
-                <div class="review-actions">
-                  <button onClick={() => handleLikeClick(review.id)}>Curtir</button>
+                <p>{review.review}</p>
+                <div className="review-actions">
+                  {isLoggedIn && (
+                    <button onClick={() => handleLikeClick(review.id)} className={`like-button ${review.isLiked ? 'liked' : ''}`}>
+                      <span role="img" aria-label="like">❤️</span> {review.likesCount}
+                    </button>
+                  )}
                   {isLoggedIn && currentUserId === review.userId && ( // Only show edit/delete if logged in AND current user is the author
                     <>
                       <button onClick={() => handleEditClick(review)}>Editar</button>

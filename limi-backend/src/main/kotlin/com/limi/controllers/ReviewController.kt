@@ -21,7 +21,9 @@ fun Route.reviewController(reviewService: ReviewService, userService: UserServic
                 call.respond(HttpStatusCode.BadRequest, "Invalid book ID")
                 return@get
             }
-            val reviews = reviewService.getReviewsByBookId(livroId)
+            val principal = call.principal<JWTPrincipal>()
+            val userId = principal?.payload?.getClaim("userId")?.asInt()
+            val reviews = reviewService.getReviewsByBookId(livroId, userId)
             call.respond(reviews)
         }
         authenticate("auth-jwt") {

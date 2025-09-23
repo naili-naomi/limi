@@ -96,17 +96,19 @@ fun Application.module() {
     val autorRepository = AutorRepository()
     val externalBookService = ExternalBookService(client)
 
+    val likeRepository = LikeRepository()
+    val likeService = LikeService(likeRepository)
+
     // Serviços com injeção de dependência correta
     val catalogoService = CatalogoService(livroRepository)
     val livroService = LivroService(livroRepository, externalBookService)
-    val reviewService = ReviewService(reviewRepository, userRepository)
+    val reviewService = ReviewService(reviewRepository, userRepository, likeRepository)
     val userService = UserService(userRepository)
     val autorService = AutorService(autorRepository)
     val authService = AuthService(userRepository)
     val favoriteRepository = FavoriteRepository()
     val favoriteService = FavoriteService(favoriteRepository)
-    val likeRepository = LikeRepository()
-    val likeService = LikeService(likeRepository)
+
 
     // Rotas
     routing {
@@ -120,8 +122,8 @@ fun Application.module() {
         likeRoutes(likeService)
 
         authenticate("auth-jwt") {
-            reviewController(ReviewService(ReviewRepository(), UserRepository()), UserService(UserRepository()))
-            livroRoutes(LivroService(LivroRepository(), ExternalBookService(client)))
+            reviewController(reviewService, userService)
+            livroRoutes(livroService)
             // qualquer outra rota que deva exigir login
         }
 

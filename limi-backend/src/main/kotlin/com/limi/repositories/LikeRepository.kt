@@ -28,4 +28,8 @@ class LikeRepository {
     fun isLiked(userId: Int, reviewId: Int): Boolean = transaction {
         ReviewLikes.select(ReviewLikes.user eq userId and (ReviewLikes.review eq reviewId)).count() > 0
     }
+
+    fun getLikesCount(reviewId: Int): Long = transaction {
+        ReviewLikes.select { ReviewLikes.review eq reviewId }.count()
+    }
 }

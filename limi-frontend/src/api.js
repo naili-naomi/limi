@@ -96,8 +96,12 @@ export async function getAllGeneros() {
   return await response.json();
 }
 
-export async function getReviewsByBookId(bookId) {
-  const response = await fetch(`${API_BASE}/api/livros/${bookId}/reviews`);
+export async function getReviewsByBookId(bookId, token) {
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const response = await fetch(`${API_BASE}/api/livros/${bookId}/reviews`, { headers });
   if (!response.ok) {
     throw new Error('Erro ao buscar reviews');
   }
